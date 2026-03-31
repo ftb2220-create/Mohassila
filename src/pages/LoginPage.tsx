@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { seedAllData } from '../firebase/seedData';
 
 const LoginPage: React.FC = () => {
     const [username, setUsername] = useState('');
@@ -10,7 +9,6 @@ const LoginPage: React.FC = () => {
     const [loading, setLoading] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
     const [mounted, setMounted] = useState(false);
-    const [seedLoading, setSeedLoading] = useState(false);
     const { login } = useAuth();
     const navigate = useNavigate();
 
@@ -36,18 +34,6 @@ const LoginPage: React.FC = () => {
             setError('حدث خطأ في الاتصال. حاول مرة أخرى');
         }
         setLoading(false);
-    };
-
-    const handleSeed = async () => {
-        setSeedLoading(true);
-        try {
-            await seedAllData();
-            alert('تم رفع البيانات بنجاح لـ Firebase!');
-        } catch (err: any) {
-            alert('حدث خطأ أثناء الرفع: ' + err.message);
-            console.error(err);
-        }
-        setSeedLoading(false);
     };
 
     return (
@@ -184,34 +170,6 @@ const LoginPage: React.FC = () => {
                             )}
                         </button>
                     </form>
-
-                    {/* Temporary Seed Button */}
-                    <div style={{ marginTop: '20px', textAlign: 'center' }}>
-                        <button
-                            onClick={handleSeed}
-                            disabled={seedLoading}
-                            style={{
-                                background: 'transparent',
-                                border: '1px solid rgba(255,255,255,0.1)',
-                                color: '#94A3B8',
-                                padding: '8px 16px',
-                                borderRadius: '8px',
-                                fontSize: '12px',
-                                cursor: 'pointer',
-                                transition: 'all 0.3s'
-                            }}
-                            onMouseOver={(e) => {
-                                e.currentTarget.style.color = '#fff';
-                                e.currentTarget.style.borderColor = '#06B6D4';
-                            }}
-                            onMouseOut={(e) => {
-                                e.currentTarget.style.color = '#94A3B8';
-                                e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)';
-                            }}
-                        >
-                            {seedLoading ? 'جاري رفع البيانات...' : '🚀 رفع البيانات الوهمية لـ Firebase (يُستخدم مرة واحدة فقط)'}
-                        </button>
-                    </div>
 
                 </div>
 
