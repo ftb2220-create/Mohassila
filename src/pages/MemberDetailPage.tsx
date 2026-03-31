@@ -559,11 +559,11 @@ const MemberDetailPage: React.FC = () => {
                             <div className="bg-amber-50 rounded-xl p-4 mb-6 space-y-2">
                                 <div className="flex justify-between text-sm">
                                     <span className="text-amber-700">كاش باك</span>
-                                    <span className="font-bold text-amber-900">2% → 5%</span>
+                                    <span className="font-bold text-amber-900">2% إلى 5%</span>
                                 </div>
                                 <div className="flex justify-between text-sm">
                                     <span className="text-amber-700">البطاقات</span>
-                                    <span className="font-bold text-amber-900">2 → 4</span>
+                                    <span className="font-bold text-amber-900">2 إلى 4</span>
                                 </div>
                                 <div className="flex justify-between text-sm border-t border-amber-200 pt-2 mt-2">
                                     <span className="text-amber-700">فرق الرسوم</span>
