@@ -1,0 +1,914 @@
+@import "tailwindcss";
+
+/* ============ THEME - Cyan & Navy ============ */
+:root {
+  --m-cyan: #06B6D4;
+  --m-cyan-light: #22D3EE;
+  --m-teal: #14B8A6;
+  --m-gold: #F59E0B;
+  --m-navy: #0F172A;
+  --m-navy-light: #1E293B;
+  --m-glass: rgba(255, 255, 255, 0.65);
+  --m-radius: 16px;
+  --m-shadow: 0 4px 24px -4px rgba(0, 0, 0, 0.06);
+  --m-shadow-lg: 0 8px 32px -8px rgba(0, 0, 0, 0.1);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'IBM Plex Sans Arabic', 'Inter', system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  background: #F1F5F9;
+  color: #0F172A;
+  overflow-x: hidden;
+  transition: background-color 0.2s ease, color 0.2s ease;
+  letter-spacing: 0.01em;
+  line-height: 1.7;
+}
+
+/* Selection */
+::selection {
+  background: rgba(6, 182, 212, 0.2);
+  color: #0F172A;
+}
+
+/* ============ DARK MODE ============ */
+.dark body {
+  background: #0B1120;
+  color: #E2E8F0;
+}
+
+.dark ::selection {
+  background: rgba(6, 182, 212, 0.3);
+  color: #E2E8F0;
+}
+
+/* Sidebar stays dark in both modes (already dark) */
+
+/* Main content area */
+.dark .bg-slate-50 {
+  background-color: #0B1120 !important;
+}
+
+.dark .bg-white {
+  background-color: #1E293B !important;
+}
+
+.dark .bg-white\/80 {
+  background-color: rgba(30, 41, 59, 0.9) !important;
+}
+
+.dark .bg-white\/50 {
+  background-color: rgba(30, 41, 59, 0.5) !important;
+}
+
+/* Text colors */
+.dark .text-slate-900 {
+  color: #F1F5F9 !important;
+}
+
+.dark .text-slate-800 {
+  color: #E2E8F0 !important;
+}
+
+.dark .text-slate-700 {
+  color: #CBD5E1 !important;
+}
+
+.dark .text-slate-600 {
+  color: #94A3B8 !important;
+}
+
+.dark .text-slate-500 {
+  color: #64748B !important;
+}
+
+/* Borders */
+.dark .border-slate-100 {
+  border-color: rgba(255, 255, 255, 0.06) !important;
+}
+
+.dark .border-slate-200 {
+  border-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+.dark .border-slate-50 {
+  border-color: rgba(255, 255, 255, 0.04) !important;
+}
+
+/* Backgrounds with subtle tints */
+.dark .bg-slate-100 {
+  background-color: #1E293B !important;
+}
+
+.dark .bg-slate-50 {
+  background-color: rgba(30, 41, 59, 0.5) !important;
+}
+
+/* KPI card backgrounds in dark mode */
+.dark .bg-gradient-to-br.from-cyan-50 {
+  background: linear-gradient(to bottom right, rgba(6, 182, 212, 0.1), rgba(20, 184, 166, 0.05)) !important;
+}
+
+.dark .bg-gradient-to-br.from-emerald-50 {
+  background: linear-gradient(to bottom right, rgba(16, 185, 129, 0.1), rgba(34, 197, 94, 0.05)) !important;
+}
+
+.dark .bg-gradient-to-br.from-amber-50 {
+  background: linear-gradient(to bottom right, rgba(245, 158, 11, 0.1), rgba(249, 115, 22, 0.05)) !important;
+}
+
+.dark .bg-gradient-to-br.from-violet-50 {
+  background: linear-gradient(to bottom right, rgba(139, 92, 246, 0.1), rgba(168, 85, 247, 0.05)) !important;
+}
+
+/* KPI card borders in dark mode */
+.dark .border-cyan-100 {
+  border-color: rgba(6, 182, 212, 0.15) !important;
+}
+
+.dark .border-emerald-100 {
+  border-color: rgba(16, 185, 129, 0.15) !important;
+}
+
+.dark .border-amber-100 {
+  border-color: rgba(245, 158, 11, 0.15) !important;
+}
+
+.dark .border-violet-100 {
+  border-color: rgba(139, 92, 246, 0.15) !important;
+}
+
+/* Stat card small backgrounds */
+.dark .bg-cyan-50 {
+  background-color: rgba(6, 182, 212, 0.1) !important;
+}
+
+.dark .bg-emerald-50 {
+  background-color: rgba(16, 185, 129, 0.1) !important;
+}
+
+.dark .bg-amber-50 {
+  background-color: rgba(245, 158, 11, 0.1) !important;
+}
+
+.dark .bg-red-50 {
+  background-color: rgba(239, 68, 68, 0.1) !important;
+}
+
+.dark .bg-violet-50 {
+  background-color: rgba(139, 92, 246, 0.1) !important;
+}
+
+/* Input focus in dark mode */
+.dark input,
+.dark select,
+.dark textarea {
+  background-color: rgba(15, 23, 42, 0.6) !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+  color: #E2E8F0 !important;
+}
+
+.dark input::placeholder,
+.dark textarea::placeholder {
+  color: #475569 !important;
+}
+
+.dark input:focus,
+.dark select:focus,
+.dark textarea:focus {
+  border-color: rgba(6, 182, 212, 0.5) !important;
+}
+
+/* Table rows hover */
+.dark .hover\:bg-slate-50:hover {
+  background-color: rgba(255, 255, 255, 0.03) !important;
+}
+
+/* Dividers */
+.dark .divide-slate-50> :not([hidden])~ :not([hidden]) {
+  border-color: rgba(255, 255, 255, 0.04) !important;
+}
+
+/* Hover backgrounds */
+.dark .hover\:bg-slate-100:hover {
+  background-color: rgba(255, 255, 255, 0.06) !important;
+}
+
+/* Code blocks */
+.dark code {
+  background-color: rgba(255, 255, 255, 0.06) !important;
+  color: #94A3B8 !important;
+}
+
+/* Status badges stay colorful — no override needed */
+
+/* Modals in dark mode */
+.dark .bg-black\/50 {
+  background-color: rgba(0, 0, 0, 0.7) !important;
+}
+
+.dark .shadow-2xl {
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6) !important;
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #CBD5E1;
+  border-radius: 8px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94A3B8;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: #334155;
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: #475569;
+}
+
+::selection {
+  background: #06B6D4;
+  color: white;
+}
+
+/* ============ ANIMATIONS ============ */
+@keyframes blob-float {
+
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+
+  25% {
+    transform: translate(30px, -50px) scale(1.1);
+  }
+
+  50% {
+    transform: translate(-20px, 20px) scale(0.9);
+  }
+
+  75% {
+    transform: translate(20px, 40px) scale(1.05);
+  }
+}
+
+@keyframes gradient-shift {
+
+  0%,
+  100% {
+    background-position: 0% 50%;
+  }
+
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes float {
+
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+@keyframes slide-in-right {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes scale-in {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.hero-blob {
+  animation: blob-float 20s ease-in-out infinite;
+}
+
+.hero-blob-delay {
+  animation: blob-float 25s ease-in-out infinite;
+  animation-delay: -5s;
+}
+
+.animate-gradient {
+  background-size: 200% 200%;
+  animation: gradient-shift 4s ease-in-out infinite;
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+.hero-fade-in {
+  animation: fade-up 0.8s ease-out both;
+}
+
+.hero-fade-in-delay-1 {
+  animation: fade-up 0.8s ease-out 0.15s both;
+}
+
+.hero-fade-in-delay-2 {
+  animation: fade-up 0.8s ease-out 0.3s both;
+}
+
+.hero-fade-in-delay-3 {
+  animation: fade-up 0.8s ease-out 0.45s both;
+}
+
+.hero-fade-in-delay-4 {
+  animation: fade-up 0.8s ease-out 0.6s both;
+}
+
+.animate-slide-in {
+  animation: slide-in-right 0.4s ease-out both;
+}
+
+.animate-scale-in {
+  animation: scale-in 0.3s ease-out both;
+}
+
+.glass {
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.shadow-3xl {
+  box-shadow: 0 35px 60px -15px rgba(0, 0, 0, 0.3);
+}
+
+a,
+button {
+  transition: all 0.3s ease;
+}
+
+/* ============ DASHBOARD SPECIFIC ============ */
+
+/* Smooth page transitions */
+main>* {
+  animation: fade-up 0.3s ease-out both;
+}
+
+/* Table hover rows */
+tr {
+  transition: background-color 0.15s ease;
+}
+
+/* Custom focus styles */
+input:focus,
+select:focus,
+textarea:focus {
+  outline: none;
+}
+
+/* Better select styling */
+select {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+  background-position: left 0.5rem center;
+  background-repeat: no-repeat;
+  background-size: 1.5em 1.5em;
+  padding-left: 2.5rem;
+}
+
+/* Modal backdrop animation */
+.fixed.inset-0 {
+  animation: fade-up 0.2s ease-out;
+}
+
+/* Card hover lift effect */
+.hover\:shadow-lg:hover {
+  transform: translateY(-2px);
+}
+
+@media (max-width: 768px) {
+  h1 {
+    font-size: 1.5rem !important;
+  }
+
+  h2 {
+    font-size: 1.25rem !important;
+  }
+}
+
+/* Print styles */
+@media print {
+
+  aside,
+  header,
+  nav,
+  .no-print {
+    display: none !important;
+  }
+
+  main {
+    padding: 0 !important;
+  }
+}
+
+/* ============ ANIMATIONS ============ */
+@keyframes slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes scale-in {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-slide-up {
+  animation: slide-up 0.3s ease-out;
+}
+
+.animate-scale-in {
+  animation: scale-in 0.2s ease-out;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.25s ease-out;
+}
+
+/* ============ VISUAL POLISH ============ */
+
+/* Glass Card Effect */
+.glass-card {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+/* Enhanced table row hover */
+table tbody tr {
+  transition: all 0.15s ease;
+}
+
+table tbody tr:hover {
+  background: rgba(6, 182, 212, 0.03) !important;
+}
+
+/* Enhanced focus ring for inputs */
+input:focus,
+select:focus,
+textarea:focus {
+  box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.1);
+}
+
+/* Polished card shadows */
+.bg-white {
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.02), 0 1px 2px -1px rgba(0, 0, 0, 0.02);
+}
+
+/* Gradient text utility */
+.text-gradient {
+  background: linear-gradient(135deg, #06B6D4, #14B8A6);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Sidebar active glow */
+.sidebar-active {
+  position: relative;
+}
+
+.sidebar-active::before {
+  content: '';
+  position: absolute;
+  right: -12px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 3px;
+  height: 20px;
+  background: linear-gradient(180deg, #06B6D4, #14B8A6);
+  border-radius: 3px;
+}
+
+/* Notification badge pulse */
+@keyframes badge-pulse {
+
+  0%,
+  100% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.15);
+  }
+}
+
+.badge-pulse {
+  animation: badge-pulse 2s ease-in-out infinite;
+}
+
+/* (Scrollbar styles already defined above) */
+
+/* Button press effect */
+button:active:not(:disabled) {
+  transform: scale(0.97);
+}
+
+/* Smooth hover lift */
+.hover-lift {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.hover-lift:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px -5px rgba(0, 0, 0, 0.1);
+}
+
+/* Number font */
+.font-tabular {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
+}
+
+/* Gradient animation for dashboard banner */
+@keyframes gradient-shift {
+  0% {
+    background-position: 0% 50%;
+  }
+
+  33% {
+    background-position: 50% 100%;
+  }
+
+  66% {
+    background-position: 100% 50%;
+  }
+
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+/* Fade-in animation for staggered elements */
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in-up 0.5s ease-out forwards;
+  opacity: 0;
+}
+
+/* ====== GLOBAL ARABIC TEXT ANTI-CLIPPING FIX ====== */
+
+/* 
+ * Arabic text has tall ascenders/descenders that get clipped 
+ * with default line-height and overflow-hidden containers.
+ * This global fix ensures ALL Arabic text is always fully visible.
+ */
+
+/* Headings - generous line-height for Arabic */
+h1, h2, h3, h4, h5, h6 {
+  line-height: 1.8 !important;
+  overflow: visible !important;
+  text-overflow: unset !important;
+  padding-top: 0.1em;
+  padding-bottom: 0.1em;
+}
+
+/* Paragraphs & body text */
+p, span, a, li, label, div {
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+}
+
+p {
+  line-height: 2 !important;
+  overflow: visible !important;
+}
+
+/* Small text also needs proper line-height */
+.text-xs, .text-sm, .text-base, .text-lg, .text-xl, .text-2xl {
+  overflow: visible;
+}
+
+/* Specific overrides - these intentionally need compact line-height */
+button,
+.inline-flex,
+.badge,
+td,
+th,
+input,
+select,
+textarea,
+code,
+.font-mono,
+.font-tabular {
+  line-height: normal !important;
+}
+
+/* Truncate class: only clip horizontally, keep vertical visible */
+.truncate {
+  line-height: 1.6 !important;
+  padding-top: 0.15em;
+  padding-bottom: 0.15em;
+}
+
+/* Cards and containers with overflow-hidden: 
+   Prevent them from clipping text vertically */
+.rounded-2xl,
+.rounded-3xl,
+.rounded-xl {
+  overflow: visible;
+}
+
+/* 
+ * Re-apply overflow-hidden ONLY where it's truly needed:
+ * decorative backgrounds, card previews, table containers, 
+ * images, dropdowns 
+ */
+.overflow-hidden {
+  overflow: hidden !important;
+}
+
+/* Override specifically for table containers to keep horizontal scroll */
+.overflow-x-auto {
+  overflow-x: auto !important;
+  overflow-y: visible;
+}
+
+/* Ensure notification/search dropdowns still clip properly */
+.max-h-72,
+.max-h-80,
+.max-h-96 {
+  overflow-y: auto !important;
+}
+
+/* ====== COMPREHENSIVE DARK MODE ====== */
+
+/* Background containers */
+.dark .bg-white {
+  background-color: #1E293B !important;
+  color: #E2E8F0;
+}
+
+.dark .bg-slate-50 {
+  background-color: #0F172A !important;
+}
+
+.dark .bg-slate-50\/80 {
+  background-color: rgba(15, 23, 42, 0.8) !important;
+}
+
+/* Borders */
+.dark .border-slate-100 {
+  border-color: #334155 !important;
+}
+
+.dark .border-slate-200 {
+  border-color: #475569 !important;
+}
+
+.dark .border-slate-50 {
+  border-color: #1E293B !important;
+}
+
+/* Text Colors */
+.dark .text-slate-900 {
+  color: #F1F5F9 !important;
+}
+
+.dark .text-slate-800 {
+  color: #E2E8F0 !important;
+}
+
+.dark .text-slate-700 {
+  color: #CBD5E1 !important;
+}
+
+.dark .text-slate-600 {
+  color: #94A3B8 !important;
+}
+
+.dark .text-slate-500 {
+  color: #64748B !important;
+}
+
+/* Inputs and Selects */
+.dark input,
+.dark select,
+.dark textarea {
+  background-color: rgba(15, 23, 42, 0.5) !important;
+  border-color: #475569 !important;
+  color: #E2E8F0 !important;
+}
+
+.dark input::placeholder,
+.dark textarea::placeholder {
+  color: #64748B !important;
+}
+
+.dark input:focus,
+.dark select:focus,
+.dark textarea:focus {
+  border-color: rgba(6, 182, 212, 0.5) !important;
+}
+
+/* Table */
+.dark table thead tr {
+  background-color: rgba(30, 41, 59, 0.8) !important;
+}
+
+.dark table tbody tr:hover {
+  background-color: rgba(6, 182, 212, 0.05) !important;
+}
+
+.dark table td {
+  border-color: #1E293B !important;
+}
+
+/* Code/Mono elements */
+.dark code {
+  background-color: #0F172A !important;
+  color: #94A3B8 !important;
+}
+
+/* Summary/stat cards backgrounds */
+.dark .bg-cyan-50 {
+  background-color: rgba(6, 182, 212, 0.15) !important;
+}
+
+.dark .bg-emerald-50 {
+  background-color: rgba(16, 185, 129, 0.15) !important;
+}
+
+.dark .bg-amber-50 {
+  background-color: rgba(245, 158, 11, 0.15) !important;
+}
+
+.dark .bg-red-50 {
+  background-color: rgba(239, 68, 68, 0.15) !important;
+}
+
+/* Status badges - keep them readable */
+.dark .bg-emerald-100 {
+  background-color: rgba(16, 185, 129, 0.2) !important;
+}
+
+.dark .bg-red-100 {
+  background-color: rgba(239, 68, 68, 0.2) !important;
+}
+
+.dark .bg-amber-100 {
+  background-color: rgba(245, 158, 11, 0.2) !important;
+}
+
+.dark .bg-cyan-100 {
+  background-color: rgba(6, 182, 212, 0.2) !important;
+}
+
+.dark .bg-blue-100 {
+  background-color: rgba(59, 130, 246, 0.2) !important;
+}
+
+.dark .bg-slate-100 {
+  background-color: rgba(51, 65, 85, 0.5) !important;
+}
+
+/* Hover states */
+.dark .hover\:bg-slate-100:hover {
+  background-color: rgba(51, 65, 85, 0.5) !important;
+}
+
+.dark .hover\:bg-slate-50:hover {
+  background-color: rgba(30, 41, 59, 0.8) !important;
+}
+
+.dark .hover\:bg-red-50:hover {
+  background-color: rgba(239, 68, 68, 0.15) !important;
+}
+
+/* Shadows - subtle in dark mode */
+.dark .shadow-sm,
+.dark .shadow-lg {
+  box-shadow: 0 4px 16px -4px rgba(0, 0, 0, 0.4) !important;
+}
+
+.dark .hover\:shadow-lg:hover {
+  box-shadow: 0 8px 24px -8px rgba(0, 0, 0, 0.5) !important;
+}
+
+/* Pagination */
+.dark .bg-cyan-500 {
+  background-color: #06B6D4 !important;
+}
+
+/* Footer */
+.dark footer {
+  background-color: rgba(15, 23, 42, 0.3) !important;
+  border-color: rgba(51, 65, 85, 0.4) !important;
+}
+
+/* Dropdown menus (search, notifications) */
+.dark .animate-scale-in {
+  background-color: #1E293B !important;
+  border-color: #334155 !important;
+}
+
+/* Card accent lines on hover - keep visible */
+.dark .group:hover .group-hover\:opacity-80 {
+  opacity: 0.6;
+}
