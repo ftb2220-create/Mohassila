@@ -43,30 +43,46 @@ const MemberDetailPage: React.FC = () => {
     const tier = TIERS[member.tier];
     const canIssueCard = member.cards.length < tier.maxCards;
 
-    const handleRenew = () => {
-        renewMembership(member.id, employee?.id || '');
-        setShowRenewModal(false);
-    };
-
-    const handleIssueCard = () => {
-        if (cardHolderName.trim()) {
-            issueCard(member.id, cardHolderName.trim(), cardType);
-            setCardHolderName('');
-            setShowCardModal(false);
+    const handleRenew = async () => {
+        try {
+            await renewMembership(member.id, employee?.id || '', employee?.name);
+            setShowRenewModal(false);
+        } catch (error) {
+            console.error('Error renewing membership:', error);
         }
     };
 
-    const handleUpgrade = () => {
-        updateMember(member.id, {
-            tier: 'gold' as TierType,
-            cards: member.cards.map(c => ({ ...c, tier: 'gold' as TierType })),
-        });
-        setShowUpgradeModal(false);
+    const handleIssueCard = async () => {
+        if (cardHolderName.trim()) {
+            try {
+                await issueCard(member.id, cardHolderName.trim(), cardType, employee?.name);
+                setCardHolderName('');
+                setShowCardModal(false);
+            } catch (error) {
+                console.error('Error issuing card:', error);
+            }
+        }
     };
 
-    const handleDelete = () => {
-        deleteMember(member.id);
-        navigate('/dashboard/members');
+    const handleUpgrade = async () => {
+        try {
+            await updateMember(member.id, {
+                tier: 'gold' as TierType,
+                cards: member.cards.map(c => ({ ...c, tier: 'gold' as TierType })),
+            });
+            setShowUpgradeModal(false);
+        } catch (error) {
+            console.error('Error upgrading member:', error);
+        }
+    };
+
+    const handleDelete = async () => {
+        try {
+            await deleteMember(member.id, employee?.name);
+            navigate('/dashboard/members');
+        } catch (error) {
+            console.error('Error deleting member:', error);
+        }
     };
     const handlePrintReport = () => {
         const pw = window.open('', '_blank');
@@ -228,7 +244,7 @@ const MemberDetailPage: React.FC = () => {
                         {permissions.canEditMember && (
                             member.status === 'active' ? (
                                 <button
-                                    onClick={() => suspendMember(member.id)}
+                                    onClick={async () => { try { await suspendMember(member.id, employee?.name); } catch (err) { console.error(err); } }}
                                     className="bg-red-500/20 hover:bg-red-500/30 text-white px-5 py-2.5 rounded-xl text-sm font-bold transition-all border border-red-400/30 flex items-center gap-2"
                                 >
                                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -238,7 +254,7 @@ const MemberDetailPage: React.FC = () => {
                                 </button>
                             ) : (
                                 <button
-                                    onClick={() => activateMember(member.id)}
+                                    onClick={async () => { try { await activateMember(member.id, employee?.name); } catch (err) { console.error(err); } }}
                                     className="bg-emerald-500/20 hover:bg-emerald-500/30 text-white px-5 py-2.5 rounded-xl text-sm font-bold transition-all border border-emerald-400/30 flex items-center gap-2"
                                 >
                                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

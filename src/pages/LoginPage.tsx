@@ -23,12 +23,15 @@ const LoginPage: React.FC = () => {
         setError('');
         setLoading(true);
 
-        await new Promise(r => setTimeout(r, 800));
-
-        if (login(username, password)) {
-            navigate('/dashboard');
-        } else {
-            setError('اسم المستخدم أو كلمة المرور غير صحيحة');
+        try {
+            const success = await login(username, password);
+            if (success) {
+                navigate('/dashboard');
+            } else {
+                setError('اسم المستخدم أو كلمة المرور غير صحيحة');
+            }
+        } catch {
+            setError('حدث خطأ في الاتصال. حاول مرة أخرى');
         }
         setLoading(false);
     };

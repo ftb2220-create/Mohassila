@@ -61,32 +61,36 @@ const NewMemberPage: React.FC = () => {
         if (!validate()) return;
 
         setLoading(true);
-        // Simulate a brief API call duration
-        await new Promise(resolve => setTimeout(resolve, 800));
 
         const today = new Date().toISOString().split('T')[0];
         const expiryDate = new Date();
         expiryDate.setFullYear(expiryDate.getFullYear() + 1);
 
-        const newMember = addMember({
-            name: form.name.trim(),
-            phone: form.phone.trim(),
-            email: form.email.trim(),
-            nationalId: form.nationalId.trim(),
-            tier: form.tier,
-            status: 'active',
-            joinDate: today,
-            expiryDate: expiryDate.toISOString().split('T')[0],
-            notes: form.notes.trim(),
-            city: form.city,
-            createdBy: employee?.id || '',
-        });
+        try {
+            const newMember = await addMember({
+                name: form.name.trim(),
+                phone: form.phone.trim(),
+                email: form.email.trim(),
+                nationalId: form.nationalId.trim(),
+                tier: form.tier,
+                status: 'active',
+                joinDate: today,
+                expiryDate: expiryDate.toISOString().split('T')[0],
+                notes: form.notes.trim(),
+                city: form.city,
+                createdBy: employee?.id || '',
+            }, employee?.name);
 
-        setLoading(false);
-        setSuccess(true);
-        setTimeout(() => {
-            navigate(`/dashboard/members/${newMember.id}`);
-        }, 1500);
+            setLoading(false);
+            setSuccess(true);
+            setTimeout(() => {
+                navigate(`/dashboard/members/${newMember.id}`);
+            }, 1500);
+        } catch (error) {
+            console.error('Error adding member:', error);
+            setLoading(false);
+            setErrors({ name: 'حدث خطأ أثناء إضافة العضو. حاول مرة أخرى' });
+        }
     };
 
     const tierOptions = [

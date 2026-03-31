@@ -15,14 +15,25 @@ import CardsPage from './pages/CardsPage';
 import TransactionsPage from './pages/TransactionsPage';
 import SettingsPage from './pages/SettingsPage';
 
+const LoadingScreen: React.FC = () => (
+  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh', background: '#0A0F1E' }}>
+    <div style={{ textAlign: 'center' }}>
+      <div style={{ width: 40, height: 40, border: '3px solid rgba(6,182,212,0.2)', borderTopColor: '#06B6D4', borderRadius: '50%', animation: 'spin 0.8s linear infinite', margin: '0 auto 16px' }} />
+      <p style={{ color: '#64748B', fontSize: 14 }}>جاري التحميل...</p>
+    </div>
+  </div>
+);
+
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, loading } = useAuth();
+  if (loading) return <LoadingScreen />;
   if (!isAuthenticated) return <Navigate to="/login" replace />;
   return <>{children}</>;
 };
 
 const PublicRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, loading } = useAuth();
+  if (loading) return <LoadingScreen />;
   if (isAuthenticated) return <Navigate to="/dashboard" replace />;
   return <>{children}</>;
 };

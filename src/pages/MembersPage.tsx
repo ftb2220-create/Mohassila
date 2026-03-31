@@ -372,7 +372,7 @@ const MembersPage: React.FC = () => {
                 confirmText="حذف نهائياً"
                 cancelText="إلغاء"
                 type="danger"
-                onConfirm={() => { if (deleteTarget) { deleteMember(deleteTarget.id, employee?.name); setDeleteTarget(null); } }}
+                onConfirm={async () => { if (deleteTarget) { await deleteMember(deleteTarget.id, employee?.name); setDeleteTarget(null); } }}
                 onCancel={() => setDeleteTarget(null)}
             />
         </div>
