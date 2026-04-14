@@ -912,3 +912,9 @@ code,
 .dark .group:hover .group-hover\:opacity-80 {
   opacity: 0.6;
 }
+
+/* Tooltip animation */
+@keyframes fadeInScale {
+  0% { opacity: 0; transform: translate(-50%, 4px) scale(0.95); }
+  100% { opacity: 1; transform: translate(-50%, 0) scale(1); }
+}

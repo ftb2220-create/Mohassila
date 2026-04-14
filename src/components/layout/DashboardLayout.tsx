@@ -7,6 +7,7 @@ import { useMembers } from '../../contexts/MembersContext';
 import { getPermissions } from '../../utils/permissions';
 import ScrollToTop from '../ui/ScrollToTop';
 import PageTransition from '../ui/PageTransition';
+import Tooltip from '../ui/Tooltip';
 
 const DashboardLayout: React.FC = () => {
     const { employee, logout } = useAuth();
@@ -110,10 +111,12 @@ const DashboardLayout: React.FC = () => {
             <aside
                 className={`fixed lg:static inset-y-0 right-0 z-50 w-64 flex flex-col transition-transform duration-300 lg:translate-x-0 ${sidebarOpen ? 'translate-x-0' : 'translate-x-full lg:translate-x-0'
                     }`}
-                style={{ background: 'linear-gradient(180deg, #0F172A 0%, #0B1120 100%)' }}
+                style={{ background: 'linear-gradient(160deg, #0A1628 0%, #0D1F2D 40%, #071A1F 100%)', boxShadow: 'inset -1px 0 0 rgba(6,182,212,0.07)' }}
             >
                 {/* Top accent line */}
                 <div className="h-[3px] bg-gradient-to-l from-cyan-500 via-teal-500 to-emerald-500" />
+                {/* Radial glow behind employee info */}
+                <div className="absolute top-0 right-0 w-48 h-48 rounded-full pointer-events-none" style={{ background: 'radial-gradient(circle at 80% 20%, rgba(6,182,212,0.08) 0%, transparent 70%)' }} />
                 {/* Mobile Close Button */}
                 <div className="lg:hidden flex justify-end px-4 pt-3">
                     <button
@@ -164,7 +167,7 @@ const DashboardLayout: React.FC = () => {
                 {/* Nav Links */}
                 <nav className="flex-1 px-3 py-4 overflow-y-auto">
                     {/* Main Section */}
-                    <p className="text-slate-600 text-xs font-bold uppercase tracking-wider px-3 mb-2">الرئيسية</p>
+                    <p className="text-cyan-900/60 text-xs font-bold uppercase tracking-wider px-3 mb-2">الرئيسية</p>
                     <NavLink
                         to="/dashboard"
                         end
@@ -183,7 +186,7 @@ const DashboardLayout: React.FC = () => {
                     </NavLink>
 
                     {/* Members Section */}
-                    <p className="text-slate-600 text-xs font-bold uppercase tracking-wider px-3 mb-2 mt-5">الأعضاء</p>
+                    <p className="text-cyan-900/60 text-xs font-bold uppercase tracking-wider px-3 mb-2 mt-5">الأعضاء</p>
                     <NavLink
                         to="/dashboard/members"
                         end
@@ -219,7 +222,7 @@ const DashboardLayout: React.FC = () => {
                     )}
 
                     {/* Other Section */}
-                    <p className="text-slate-600 text-xs font-bold uppercase tracking-wider px-3 mb-2 mt-5">النظام</p>
+                    <p className="text-cyan-900/60 text-xs font-bold uppercase tracking-wider px-3 mb-2 mt-5">النظام</p>
                     {permissions.canManageCards && (
                         <NavLink
                             to="/dashboard/cards"
@@ -289,15 +292,16 @@ const DashboardLayout: React.FC = () => {
 
                     <div className="flex items-center justify-center gap-2">
                         <div className="relative" ref={searchRef}>
-                            <button
-                                onClick={() => { setSearchOpen(!searchOpen); setSearchQuery(''); }}
-                                className="w-10 h-10 flex items-center justify-center text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-xl transition-colors"
-                                title="بحث"
-                            >
+                            <Tooltip content="بحث (Ctrl+K)" position="bottom">
+                                <button
+                                    onClick={() => { setSearchOpen(!searchOpen); setSearchQuery(''); }}
+                                    className="w-10 h-10 flex items-center justify-center text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-xl transition-colors"
+                                >
                                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                                 </svg>
-                            </button>
+                                </button>
+                            </Tooltip>
 
                             {searchOpen && (
                                 <div className="absolute left-0 mt-2 w-80 bg-white rounded-2xl border border-slate-100 shadow-2xl overflow-hidden z-50 animate-scale-in">
@@ -371,12 +375,12 @@ const DashboardLayout: React.FC = () => {
                                 </div>
                             )}
                         </div>
-                        <button
-                            id="theme-toggle"
-                            onClick={toggleTheme}
-                            className="w-10 h-10 flex items-center justify-center text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-xl transition-colors"
-                            title={isDark ? 'الوضع الفاتح' : 'الوضع الداكن'}
-                        >
+                        <Tooltip content={isDark ? 'الوضع الفاتح' : 'الوضع الداكن'} position="bottom">
+                            <button
+                                id="theme-toggle"
+                                onClick={toggleTheme}
+                                className="w-10 h-10 flex items-center justify-center text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-xl transition-colors"
+                            >
                             {isDark ? (
                                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
@@ -386,22 +390,25 @@ const DashboardLayout: React.FC = () => {
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
                                 </svg>
                             )}
-                        </button>
+                            </button>
+                        </Tooltip>
                         <div className="relative" ref={notifRef}>
-                            <button
-                                id="notifications-btn"
-                                onClick={() => setNotifOpen(!notifOpen)}
-                                className="relative w-10 h-10 flex items-center justify-center text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-xl transition-colors"
-                            >
+                            <Tooltip content="الإشعارات" position="bottom">
+                                <button
+                                    id="notifications-btn"
+                                    onClick={() => setNotifOpen(!notifOpen)}
+                                    className="relative w-10 h-10 flex items-center justify-center text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-xl transition-colors"
+                                >
                                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
                                 </svg>
-                                {unreadCount > 0 && (
-                                    <span className="absolute top-[3px] right-[3px] min-w-[16px] h-[16px] bg-red-500 rounded-full flex items-center justify-center text-white text-xs font-bold border-2 border-white">
-                                        {unreadCount > 9 ? '+9' : unreadCount}
-                                    </span>
-                                )}
-                            </button>
+                                    {unreadCount > 0 && (
+                                        <span className="absolute top-[3px] right-[3px] min-w-[16px] h-[16px] bg-red-500 rounded-full flex items-center justify-center text-white text-xs font-bold border-2 border-white">
+                                            {unreadCount > 9 ? '+9' : unreadCount}
+                                        </span>
+                                    )}
+                                </button>
+                            </Tooltip>
 
                             {/* Notifications Dropdown */}
                             {notifOpen && (

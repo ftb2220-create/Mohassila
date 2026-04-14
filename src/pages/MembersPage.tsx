@@ -9,6 +9,7 @@ import { exportToCSV } from '../utils/exportCSV';
 import { exportToPDF } from '../utils/exportPDF';
 import ConfirmModal from '../components/ui/ConfirmModal';
 import { PageSkeleton } from '../components/ui/Skeleton';
+import EmptyState from '../components/ui/EmptyState';
 
 const ITEMS_PER_PAGE = 10;
 
@@ -318,15 +319,12 @@ const MembersPage: React.FC = () => {
                 </div>
 
                 {filteredMembers.length === 0 && (
-                    <div className="p-12 text-center">
-                        <div className="w-20 h-20 bg-slate-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                            <svg className="w-10 h-10 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                            </svg>
-                        </div>
-                        <p className="text-slate-500 font-bold">لا توجد نتائج</p>
-                        <p className="text-sm text-slate-400 mt-1">جرب تعديل البحث أو الفلاتر</p>
-                    </div>
+                    <EmptyState
+                        type={search || filterTier !== 'all' || filterStatus !== 'all' ? 'search' : 'members'}
+                        title={search || filterTier !== 'all' || filterStatus !== 'all' ? 'لا توجد نتائج' : 'لا يوجد أعضاء بعد'}
+                        description={search || filterTier !== 'all' || filterStatus !== 'all' ? 'جرب تعديل البحث أو الفلاتر للعثور على ما تبحث عنه' : 'ابدأ بإضافة أول عضو في النظام'}
+                        action={!search && filterTier === 'all' && filterStatus === 'all' && permissions.canAddMember ? { label: 'إضافة عضو جديد', onClick: () => navigate('/dashboard/members/new') } : undefined}
+                    />
                 )}
             </div>
 
