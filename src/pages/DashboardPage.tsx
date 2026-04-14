@@ -5,9 +5,10 @@ import { useNavigate } from 'react-router-dom';
 import { TIERS } from '../types';
 import { formatCurrency, formatDate, isExpiringSoon, daysUntilExpiry } from '../data/mockData';
 import { getPermissions } from '../utils/permissions';
+import { DashboardSkeleton } from '../components/ui/Skeleton';
 
 const DashboardPage: React.FC = () => {
-    const { members, transactions, stats, activityLog } = useMembers();
+    const { members, transactions, stats, activityLog, loading } = useMembers();
     const { employee } = useAuth();
     const navigate = useNavigate();
     const permissions = getPermissions(employee?.role);
@@ -53,6 +54,8 @@ const DashboardPage: React.FC = () => {
     // Current hour for greeting
     const hour = new Date().getHours();
     const greeting = hour < 12 ? 'صباح الخير' : hour < 17 ? 'مساء الخير' : 'مساء النور';
+
+    if (loading) return <DashboardSkeleton />;
 
     return (
         <div className="space-y-6">
@@ -125,28 +128,28 @@ const DashboardPage: React.FC = () => {
                         icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" /></svg>,
                         trend: `+${stats.newMembersThisMonth} هذا الشهر`,
                         iconColor: 'text-cyan-600', iconBg: 'bg-gradient-to-br from-cyan-50 to-cyan-100/50', accentColor: 'from-cyan-500 to-teal-500',
-                        shadowHover: 'hover:shadow-cyan-100/60'
+                        shadowHover: 'hover:shadow-cyan-100/60', progress: Math.min(100, stats.totalMembers), progressColor: 'from-cyan-500 to-teal-500'
                     },
                     {
                         label: 'الأعضاء النشطين', value: stats.activeMembers,
                         icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>,
                         trend: `${activePercent}% من الإجمالي`,
                         iconColor: 'text-emerald-600', iconBg: 'bg-gradient-to-br from-emerald-50 to-emerald-100/50', accentColor: 'from-emerald-500 to-green-500',
-                        shadowHover: 'hover:shadow-emerald-100/60'
+                        shadowHover: 'hover:shadow-emerald-100/60', progress: activePercent, progressColor: 'from-emerald-500 to-green-500'
                     },
                     {
                         label: 'إيرادات الشهر', value: formatCurrency(stats.monthlyRevenue),
                         icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>,
                         trend: `${stats.renewalsThisMonth} تجديد`,
                         iconColor: 'text-amber-600', iconBg: 'bg-gradient-to-br from-amber-50 to-amber-100/50', accentColor: 'from-amber-600 to-yellow-600',
-                        shadowHover: 'hover:shadow-amber-100/60'
+                        shadowHover: 'hover:shadow-amber-100/60', progress: stats.totalRevenue > 0 ? Math.min(100, Math.round((stats.monthlyRevenue / stats.totalRevenue) * 100)) : 0, progressColor: 'from-amber-500 to-yellow-500'
                     },
                     {
                         label: 'البطاقات المصدرة', value: stats.cardsIssued,
                         icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" /></svg>,
                         trend: 'فضية + ذهبية',
                         iconColor: 'text-violet-600', iconBg: 'bg-gradient-to-br from-violet-50 to-violet-100/50', accentColor: 'from-violet-500 to-purple-500',
-                        shadowHover: 'hover:shadow-violet-100/60'
+                        shadowHover: 'hover:shadow-violet-100/60', progress: stats.totalMembers > 0 ? Math.min(100, Math.round((stats.cardsIssued / (stats.totalMembers * 2)) * 100)) : 0, progressColor: 'from-violet-500 to-purple-500'
                     },
                 ].map((card, i) => (
                     <div key={i} className={`bg-white rounded-2xl p-5 border border-slate-100/60 relative group hover:shadow-xl ${card.shadowHover} hover:-translate-y-1 transition-all duration-300 cursor-default animate-fade-in`} style={{ animationDelay: `${i * 80}ms` }}>
@@ -163,7 +166,14 @@ const DashboardPage: React.FC = () => {
                         </div>
                         <p className="text-2xl font-black text-slate-900 font-tabular leading-none">{card.value}</p>
                         <p className="text-[11px] text-slate-400 font-bold mt-1.5">{card.label}</p>
-                        <div className="mt-3 pt-3 border-t border-slate-50">
+                        {/* Progress Bar */}
+                        <div className="mt-3 h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                            <div
+                                className={`h-full bg-gradient-to-r ${card.progressColor} rounded-full transition-all duration-700`}
+                                style={{ width: `${card.progress}%` }}
+                            />
+                        </div>
+                        <div className="mt-2">
                             <p className="text-[11px] font-bold text-emerald-500">{card.trend}</p>
                         </div>
                     </div>

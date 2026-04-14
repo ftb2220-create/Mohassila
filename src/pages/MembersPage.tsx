@@ -8,11 +8,12 @@ import { getPermissions } from '../utils/permissions';
 import { exportToCSV } from '../utils/exportCSV';
 import { exportToPDF } from '../utils/exportPDF';
 import ConfirmModal from '../components/ui/ConfirmModal';
+import { PageSkeleton } from '../components/ui/Skeleton';
 
 const ITEMS_PER_PAGE = 10;
 
 const MembersPage: React.FC = () => {
-    const { members, searchMembers, deleteMember } = useMembers();
+    const { members, searchMembers, deleteMember, loading } = useMembers();
     const navigate = useNavigate();
     const { employee } = useAuth();
     const permissions = getPermissions(employee?.role);
@@ -134,6 +135,8 @@ const MembersPage: React.FC = () => {
             totalColumns: ['totalSpent'],
         });
     };
+
+    if (loading) return <PageSkeleton />;
 
     return (
         <div className="space-y-6">
