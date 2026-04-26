@@ -918,3 +918,11 @@ code,
   0% { opacity: 0; transform: translate(-50%, 4px) scale(0.95); }
   100% { opacity: 1; transform: translate(-50%, 0) scale(1); }
 }
+
+/* Hide native browser password reveal default eye icon */
+input::-ms-reveal,
+input::-ms-clear,
+input::-webkit-contacts-auto-fill-button,
+input::-webkit-credentials-auto-fill-button {
+  display: none !important;
+}
