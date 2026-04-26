@@ -1,73 +1,61 @@
-# React + TypeScript + Vite
+# نظام محصّلة (Mohassila)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+نظام **محصّلة** هو منصة متكاملة لإدارة الاشتراكات والأعضاء، مبني باستخدام تقنيات حديثة لتوفير تجربة مستخدم سلسة وآمنة، مع دعم كامل للغة العربية (RTL) والوضع الليلي (Dark Mode).
 
-Currently, two official plugins are available:
+## ✨ المميزات الرئيسية
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **إدارة الأعضاء والاشتراكات**: واجهة متكاملة لإدارة بيانات الأعضاء ومتابعة حالة اشتراكاتهم.
+- **دعم اللغة العربية**: تصميم متوافق بالكامل مع واجهات المستخدم العربية (RTL).
+- **الوضع الداكن (Dark Mode)**: واجهة مستخدم مريحة للعين مع إمكانية التبديل بين الوضعين الفاتح والداكن.
+- **تكامل مع Firebase**: استخدام Firebase لعمليات المصادقة (Authentication) وقاعدة بيانات تفاعلية في الوقت الفعلي (Firestore).
+- **لوحة تحكم تفاعلية**: إحصائيات حية، مؤشرات تقدم، وتصميم عصري.
+- **جاهز للنشر**: إعدادات محسّنة للنشر المباشر على منصة Netlify.
 
-## React Compiler
+## 🛠️ التقنيات المستخدمة
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- **الواجهة الأمامية (Frontend)**: React, TypeScript, Vite
+- **تصميم الواجهة (Styling)**: CSS حديث (Custom Design System)
+- **الواجهة الخلفية (Backend)**: Firebase (Auth & Firestore)
+- **الاستضافة (Hosting)**: Netlify
 
-## Expanding the ESLint configuration
+## ⚙️ متطلبات التشغيل والتثبيت
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+1. **نسخ المشروع:**
+   ```bash
+   git clone <رابط-المستودع>
+   cd Mohassila
+   ```
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+2. **تثبيت الحزم والاعتماديات:**
+   ```bash
+   npm install
+   ```
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+3. **إعداد متغيرات البيئة (Environment Variables):**
+   قم بإنشاء ملف `.env` في المسار الرئيسي للمشروع وأضف إعدادات Firebase الخاصة بك:
+   ```env
+   VITE_FIREBASE_API_KEY=your_api_key
+   VITE_FIREBASE_AUTH_DOMAIN=your_auth_domain
+   VITE_FIREBASE_PROJECT_ID=your_project_id
+   VITE_FIREBASE_STORAGE_BUCKET=your_storage_bucket
+   VITE_FIREBASE_MESSAGING_SENDER_ID=your_messaging_sender_id
+   VITE_FIREBASE_APP_ID=your_app_id
+   ```
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+4. **تشغيل خادم التطوير (Development Server):**
+   ```bash
+   npm run dev
+   ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+5. **بناء المشروع للإنتاج (Production Build):**
+   ```bash
+   npm run build
+   ```
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## 🔒 الأمان وحماية البيانات
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+تم إعداد النظام مع مراعاة معايير الأمان باستخدام قواعد أمان Firebase (Firestore Security Rules) لضمان حماية بيانات الأعضاء وتحديد صلاحيات الوصول بدقة.
+
+## 📞 الدعم الفني
+
+في حال وجود أي استفسارات أو مشاكل تقنية، يرجى مراجعة فريق التطوير أو فتح تذكرة (Issue) في مستودع المشروع.
