@@ -1,7 +1,7 @@
 // ============ AUTHENTICATION SERVICE ============
 // خدمة المصادقة - تسجيل الدخول والخروج
 
-import { signInWithEmailAndPassword, signOut, onAuthStateChanged, type User } from 'firebase/auth';
+import { signInWithEmailAndPassword, signOut, onAuthStateChanged, setPersistence, browserSessionPersistence, type User } from 'firebase/auth';
 import { doc, getDoc } from 'firebase/firestore';
 import { auth, db } from './config';
 import type { Employee } from '../types';
@@ -13,6 +13,10 @@ import type { Employee } from '../types';
  */
 export async function loginEmployee(username: string, password: string): Promise<Employee> {
     const email = `${username}@mohassila.app`;
+    
+    // تعيين الجلسة لتنتهي عند إغلاق المتصفح أو النافذة
+    await setPersistence(auth, browserSessionPersistence);
+    
     const userCredential = await signInWithEmailAndPassword(auth, email, password);
     const employee = await getEmployeeByUid(userCredential.user.uid);
     if (!employee) {
