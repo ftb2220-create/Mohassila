@@ -14,7 +14,6 @@ import NewMemberPage from './pages/NewMemberPage';
 import CardsPage from './pages/CardsPage';
 import TransactionsPage from './pages/TransactionsPage';
 import SettingsPage from './pages/SettingsPage';
-import LandingPage from './pages/LandingPage';
 
 const LoadingScreen: React.FC = () => (
   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh', background: '#0A0F1E' }}>
@@ -49,7 +48,6 @@ const App: React.FC = () => {
               <NotificationsProvider>
                 <Routes>
                   {/* Public Routes */}
-                  <Route path="/" element={<LandingPage />} />
                   <Route
                     path="/login"
                     element={
@@ -78,7 +76,7 @@ const App: React.FC = () => {
                   </Route>
 
                   {/* Default redirect */}
-                  <Route path="*" element={<Navigate to="/" replace />} />
+                  <Route path="*" element={<Navigate to="/login" replace />} />
                 </Routes>
               </NotificationsProvider>
             </MembersProvider>
