@@ -1,21 +1,46 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useMembers } from '../contexts/MembersContext';
 import { useAuth } from '../contexts/AuthContext';
 import { useToast } from '../contexts/ToastContext';
 import { TIERS, SAUDI_CITIES } from '../types';
-import type { TierType } from '../types';
+import type { Member, TierType } from '../types';
 import { formatCurrency, formatDate, daysUntilExpiry } from '../data/mockData';
 import { getPermissions } from '../utils/permissions';
+import { fetchMember } from '../firebase/membersService';
+import { PageSkeleton } from '../components/ui/Skeleton';
 
 const MemberDetailPage: React.FC = () => {
     const { id } = useParams<{ id: string }>();
-    const { getMember, renewMembership, issueCard, suspendMember, activateMember, updateMember, deleteMember, transactions } = useMembers();
+    const { getMember, renewMembership, issueCard, suspendMember, activateMember, updateMember, deleteMember, transactions, loading } = useMembers();
     const { employee } = useAuth();
     const { showToast } = useToast();
     const navigate = useNavigate();
     const permissions = getPermissions(employee?.role);
-    const member = getMember(id || '');
+    
+    const memberFromContext = getMember(id || '');
+    const [localMember, setLocalMember] = useState<Member | null>(null);
+    const [fetchLoading, setFetchLoading] = useState(true);
+
+    useEffect(() => {
+        if (memberFromContext) {
+            setLocalMember(memberFromContext);
+            setFetchLoading(false);
+        } else if (id) {
+            setFetchLoading(true);
+            fetchMember(id).then(m => {
+                setLocalMember(m);
+                setFetchLoading(false);
+            }).catch(err => {
+                console.error("Failed to fetch member directly:", err);
+                setFetchLoading(false);
+            });
+        } else {
+            setFetchLoading(false);
+        }
+    }, [id, memberFromContext]);
+
+    const member = localMember;
 
     const [showRenewModal, setShowRenewModal] = useState(false);
     const [showCardModal, setShowCardModal] = useState(false);
@@ -41,6 +66,10 @@ const MemberDetailPage: React.FC = () => {
     const [editForm, setEditForm] = useState({ name: '', phone: '', email: '', city: '', notes: '' });
     const [editErrors, setEditErrors] = useState<{ name?: string; phone?: string; email?: string }>({});
     const [editLoading, setEditLoading] = useState(false);
+
+    if (loading || (fetchLoading && !member)) {
+        return <PageSkeleton />;
+    }
 
     if (!member) {
         return (
