@@ -163,7 +163,7 @@ const MembersPage: React.FC = () => {
                     <button
                         id="export-members-btn"
                         onClick={handleExportMembers}
-                        className="border border-slate-200 text-slate-600 hover:text-slate-800 hover:bg-slate-50 px-4 py-3 rounded-xl font-bold text-sm transition-all flex items-center gap-2"
+                        className="border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:text-slate-800 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-slate-700/50 px-4 py-3 rounded-xl font-bold text-sm transition-all flex items-center gap-2"
                     >
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
@@ -173,7 +173,7 @@ const MembersPage: React.FC = () => {
                     <button
                         id="export-members-pdf-btn"
                         onClick={handleExportPDF}
-                        className="border border-red-200 text-red-500 hover:text-red-700 hover:bg-red-50 px-4 py-3 rounded-xl font-bold text-sm transition-all flex items-center gap-2"
+                        className="border border-red-200 dark:border-red-900/30 text-red-500 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 hover:bg-red-50 dark:hover:bg-red-950/20 px-4 py-3 rounded-xl font-bold text-sm transition-all flex items-center gap-2"
                     >
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
@@ -207,23 +207,23 @@ const MembersPage: React.FC = () => {
                     <select
                         value={filterTier}
                         onChange={(e) => setFilterTier(e.target.value)}
-                        className="bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-800 focus:outline-none focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/10 transition-all min-w-[140px]"
+                        className="bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3 text-sm text-slate-800 dark:text-slate-200 focus:outline-none focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/10 transition-all min-w-[140px]"
                     >
-                        <option value="all">كل العضويات</option>
-                        <option value="silver">الفضية</option>
-                        <option value="gold">الذهبية</option>
+                        <option value="all" className="dark:bg-slate-800">كل العضويات</option>
+                        <option value="silver" className="dark:bg-slate-800">الفضية</option>
+                        <option value="gold" className="dark:bg-slate-800">الذهبية</option>
                     </select>
 
                     {/* Status Filter */}
                     <select
                         value={filterStatus}
                         onChange={(e) => setFilterStatus(e.target.value)}
-                        className="bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-800 focus:outline-none focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/10 transition-all min-w-[140px]"
+                        className="bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3 text-sm text-slate-800 dark:text-slate-200 focus:outline-none focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/10 transition-all min-w-[140px]"
                     >
-                        <option value="all">كل الحالات</option>
-                        <option value="active">نشط</option>
-                        <option value="expired">منتهي</option>
-                        <option value="suspended">معلق</option>
+                        <option value="all" className="dark:bg-slate-800">كل الحالات</option>
+                        <option value="active" className="dark:bg-slate-800">نشط</option>
+                        <option value="expired" className="dark:bg-slate-800">منتهي</option>
+                        <option value="suspended" className="dark:bg-slate-800">معلق</option>
                     </select>
                 </div>
             </div>
@@ -244,13 +244,13 @@ const MembersPage: React.FC = () => {
                                 <th className="px-6 py-4"></th>
                             </tr>
                         </thead>
-                        <tbody className="divide-y divide-slate-50 relative">
+                        <tbody className="divide-y divide-slate-50 dark:divide-slate-700 relative">
                             {paginatedMembers.map((member, index) => {
                                 const days = daysUntilExpiry(member.expiryDate);
                                 return (
                                     <tr
                                         key={member.id}
-                                        className="hover:bg-cyan-50/30 cursor-pointer transition-colors group relative"
+                                        className="hover:bg-cyan-50/30 dark:hover:bg-slate-700/30 cursor-pointer transition-colors group relative"
                                         onClick={() => navigate(`/dashboard/members/${member.id}`)}
                                         style={{ animationDelay: `${index * 50}ms` }}
                                     >
@@ -263,15 +263,15 @@ const MembersPage: React.FC = () => {
                                                 </div>
                                                 <div>
                                                     <p className="text-sm font-bold text-slate-800 dark:text-slate-200">{member.name}</p>
-                                                    <p className="text-xs text-slate-400">{member.phone}</p>
+                                                    <p className="text-xs text-slate-400 dark:text-slate-500">{member.phone}</p>
                                                 </div>
                                             </div>
                                         </td>
                                         <td className="px-6 py-4">
-                                            <code className="text-xs text-slate-600 bg-slate-100 px-2 py-1 rounded-lg font-mono">{member.memberId}</code>
+                                            <code className="text-xs text-slate-600 dark:text-slate-400 bg-slate-100 dark:bg-slate-700 px-2 py-1 rounded-lg font-mono">{member.memberId}</code>
                                         </td>
                                         <td className="px-6 py-4">
-                                            <span className={`inline-flex items-center gap-1.5 text-xs font-bold ${member.tier === 'gold' ? 'text-amber-600' : 'text-slate-600'}`}>
+                                            <span className={`inline-flex items-center gap-1.5 text-xs font-bold ${member.tier === 'gold' ? 'text-amber-600 dark:text-amber-500' : 'text-slate-600 dark:text-slate-400'}`}>
                                                 <div className={`w-2.5 h-2.5 rounded-full bg-gradient-to-r ${TIERS[member.tier].gradient}`} />
                                                 {TIERS[member.tier].nameAr}
                                             </span>
@@ -279,24 +279,24 @@ const MembersPage: React.FC = () => {
                                         <td className="px-6 py-4">{statusBadge(member.status)}</td>
                                         <td className="px-6 py-4">
                                             <div>
-                                                <p className={`text-xs font-bold ${days <= 0 ? 'text-red-500' : days <= 30 ? 'text-amber-500' : 'text-slate-600'}`}>
+                                                <p className={`text-xs font-bold ${days <= 0 ? 'text-red-500' : days <= 30 ? 'text-amber-500' : 'text-slate-600 dark:text-slate-400'}`}>
                                                     {days <= 0 ? 'منتهي' : `${days} يوم`}
                                                 </p>
-                                                <p className="text-xs text-slate-400">{formatDate(member.expiryDate)}</p>
+                                                <p className="text-xs text-slate-400 dark:text-slate-500">{formatDate(member.expiryDate)}</p>
                                             </div>
                                         </td>
                                         <td className="px-6 py-4">
-                                            <p className="text-sm font-bold text-slate-700">{formatCurrency(member.totalSpent)}</p>
+                                            <p className="text-sm font-bold text-slate-700 dark:text-slate-300">{formatCurrency(member.totalSpent)}</p>
                                         </td>
                                         <td className="px-6 py-4">
-                                            <span className="text-xs text-slate-500">{member.city}</span>
+                                            <span className="text-xs text-slate-500 dark:text-slate-400">{member.city}</span>
                                         </td>
                                         <td className="px-6 py-4">
                                             <div className="flex items-center gap-1">
                                                 {permissions.canDeleteMember && (
                                                     <button
                                                         onClick={(e) => { e.stopPropagation(); setDeleteTarget({ id: member.id, name: member.name }); }}
-                                                        className="text-slate-300 hover:text-red-500 transition-colors p-1.5 rounded-lg hover:bg-red-50"
+                                                        className="text-slate-300 dark:text-slate-600 hover:text-red-500 dark:hover:text-red-400 transition-colors p-1.5 rounded-lg hover:bg-red-50 dark:hover:bg-red-950/20"
                                                         title="حذف العضو"
                                                     >
                                                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -304,7 +304,7 @@ const MembersPage: React.FC = () => {
                                                         </svg>
                                                     </button>
                                                 )}
-                                                <button className="text-slate-400 hover:text-cyan-500 transition-colors p-1">
+                                                <button className="text-slate-400 dark:text-slate-500 hover:text-cyan-500 dark:hover:text-cyan-400 transition-colors p-1">
                                                     <svg className="w-5 h-5 rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
                                                     </svg>
@@ -328,17 +328,17 @@ const MembersPage: React.FC = () => {
                 )}
             </div>
 
-            {/* Pagination */}
+             {/* Pagination */}
             {totalPages > 1 && (
-                <div className="flex items-center justify-between bg-white rounded-2xl border border-slate-100 px-6 py-4">
-                    <p className="text-xs text-slate-400">
+                <div className="flex items-center justify-between bg-white dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 px-6 py-4">
+                    <p className="text-xs text-slate-400 dark:text-slate-500">
                         عرض {(currentPage - 1) * ITEMS_PER_PAGE + 1}-{Math.min(currentPage * ITEMS_PER_PAGE, sorted.length)} من {sorted.length}
                     </p>
                     <div className="flex items-center gap-1">
                         <button
                             onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
                             disabled={currentPage === 1}
-                            className="px-3 py-2 rounded-lg text-xs font-bold transition-all disabled:opacity-30 disabled:cursor-not-allowed hover:bg-slate-100 text-slate-600"
+                            className="px-3 py-2 rounded-lg text-xs font-bold transition-all disabled:opacity-30 disabled:cursor-not-allowed hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300"
                         >
                             السابق
                         </button>
@@ -348,7 +348,7 @@ const MembersPage: React.FC = () => {
                                 onClick={() => setCurrentPage(p)}
                                 className={`w-8 h-8 rounded-lg text-xs font-bold transition-all ${currentPage === p
                                     ? 'bg-cyan-500 text-white'
-                                    : 'text-slate-500 hover:bg-slate-100'
+                                    : 'text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700'
                                     }`}
                             >
                                 {p}
@@ -357,7 +357,7 @@ const MembersPage: React.FC = () => {
                         <button
                             onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
                             disabled={currentPage === totalPages}
-                            className="px-3 py-2 rounded-lg text-xs font-bold transition-all disabled:opacity-30 disabled:cursor-not-allowed hover:bg-slate-100 text-slate-600"
+                            className="px-3 py-2 rounded-lg text-xs font-bold transition-all disabled:opacity-30 disabled:cursor-not-allowed hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300"
                         >
                             التالي
                         </button>

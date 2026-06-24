@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, type ReactNode, useCallback, useEffect } from 'react';
-import type { Member, Transaction, DashboardStats } from '../types';
+import type { Member, Transaction, DashboardStats, CardStatus } from '../types';
 import {
     subscribeToMembers, createMember as createMemberDoc,
     updateMember as updateMemberDoc, deleteMemberDoc,
@@ -30,6 +30,7 @@ interface MembersContextType {
     issueCard: (memberId: string, holderName: string, type: 'primary' | 'family', performedBy?: string) => Promise<void>;
     suspendMember: (id: string, performedBy?: string) => Promise<void>;
     activateMember: (id: string, performedBy?: string) => Promise<void>;
+    updateCardStatus: (memberId: string, cardId: string, status: CardStatus, performedBy?: string) => Promise<void>;
     getMember: (id: string) => Member | undefined;
     searchMembers: (query: string) => Member[];
     addActivity: (entry: Omit<ActivityEntry, 'id' | 'timestamp'>) => void;
@@ -185,6 +186,21 @@ export const MembersProvider: React.FC<{ children: ReactNode }> = ({ children })
         addActivity({ action: 'تفعيل عضوية', details: `تم تفعيل ${member?.name || ''}`, performedBy: performedBy || 'النظام', type: 'activate' });
     }, [members, addActivity]);
 
+    const updateCardStatus = useCallback(async (memberId: string, cardId: string, status: CardStatus, performedBy?: string) => {
+        const member = members.find(m => m.id === memberId);
+        if (!member) return;
+        const updatedCards = member.cards.map(c => c.id === cardId ? { ...c, status } : c);
+        await updateMemberDoc(memberId, { cards: updatedCards });
+        const card = member.cards.find(c => c.id === cardId);
+        const statusLabels: Record<string, string> = { active: 'نشطة', inactive: 'غير نشطة', lost: 'مفقودة', replaced: 'مستبدلة' };
+        addActivity({
+            action: 'تحديث حالة بطاقة',
+            details: `تحديث حالة بطاقة لـ ${card?.holderName || ''} إلى ${statusLabels[status] || status}`,
+            performedBy: performedBy || 'النظام',
+            type: 'card'
+        });
+    }, [members, addActivity]);
+
     const getMember = useCallback((id: string) => {
         return members.find(m => m.id === id);
     }, [members]);
@@ -205,7 +221,7 @@ export const MembersProvider: React.FC<{ children: ReactNode }> = ({ children })
         <MembersContext.Provider value={{
             members, transactions, stats, activityLog, loading,
             addMember, updateMember, deleteMember, renewMembership,
-            issueCard, suspendMember, activateMember,
+            issueCard, suspendMember, activateMember, updateCardStatus,
             getMember, searchMembers, addActivity,
         }}>
             {children}

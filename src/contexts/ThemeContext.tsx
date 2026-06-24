@@ -19,7 +19,8 @@ export const useTheme = () => {
 export const ThemeProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     const [theme, setTheme] = useState<Theme>(() => {
         const saved = localStorage.getItem('mohassila_theme');
-        return (saved === 'dark' || saved === 'light') ? saved : 'light';
+        if (saved === 'dark' || saved === 'light') return saved;
+        return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
     });
 
     const toggleTheme = useCallback(() => {
@@ -38,6 +39,18 @@ export const ThemeProvider: React.FC<{ children: ReactNode }> = ({ children }) =
             root.classList.remove('dark');
         }
     }, [theme]);
+
+    useEffect(() => {
+        if (localStorage.getItem('mohassila_theme')) return;
+
+        const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+        const handleChange = (e: MediaQueryListEvent) => {
+            setTheme(e.matches ? 'dark' : 'light');
+        };
+
+        mediaQuery.addEventListener('change', handleChange);
+        return () => mediaQuery.removeEventListener('change', handleChange);
+    }, []);
 
     return (
         <ThemeContext.Provider value={{ theme, toggleTheme, isDark: theme === 'dark' }}>

@@ -22,8 +22,16 @@ export interface Member {
     cards: MemberCard[];       // البطاقات
     familyMembers: FamilyMember[]; // أفراد العائلة
     notes: string;             // ملاحظات
+    notesLog?: NoteEntry[];    // سجل الملاحظات التاريخي
     city: string;              // المدينة
     createdBy: string;         // الموظف المسؤول
+}
+
+export interface NoteEntry {
+    id: string;
+    text: string;
+    date: string;
+    author: string;
 }
 
 export interface MemberCard {

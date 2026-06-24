@@ -11,6 +11,25 @@ const TransactionsPage: React.FC = () => {
     const [dateRange, setDateRange] = useState<string>('all');
     const [dateFrom, setDateFrom] = useState('');
     const [dateTo, setDateTo] = useState('');
+    const [currentPage, setCurrentPage] = useState(1);
+    const [sortBy, setSortBy] = useState<string>('date');
+    const [sortDir, setSortDir] = useState<'asc' | 'desc'>('desc');
+
+    const handleSort = (col: string) => {
+        if (sortBy === col) {
+            setSortDir(prev => prev === 'asc' ? 'desc' : 'asc');
+        } else {
+            setSortBy(col);
+            setSortDir('asc');
+        }
+        setCurrentPage(1);
+    };
+
+    const SortIcon: React.FC<{ col: string }> = ({ col }) => (
+        <span className={`inline-block mr-1 text-xs ${sortBy === col ? 'text-cyan-500' : 'text-slate-400 dark:text-slate-500'}`}>
+            {sortBy === col ? (sortDir === 'asc' ? '▲' : '▼') : '⇅'}
+        </span>
+    );
 
     let filtered = transactions;
     if (search) {
@@ -40,6 +59,25 @@ const TransactionsPage: React.FC = () => {
         if (dateFrom) filtered = filtered.filter(t => t.date >= dateFrom);
         if (dateTo) filtered = filtered.filter(t => t.date <= dateTo);
     }
+
+    // Sorting
+    const sorted = [...filtered].sort((a, b) => {
+        let cmp = 0;
+        if (sortBy === 'date') {
+            cmp = new Date(a.date).getTime() - new Date(b.date).getTime();
+        } else if (sortBy === 'amount') {
+            cmp = a.amount - b.amount;
+        } else if (sortBy === 'cashback') {
+            cmp = a.cashback - b.cashback;
+        } else if (sortBy === 'type') {
+            cmp = a.type.localeCompare(b.type, 'ar');
+        } else if (sortBy === 'memberName') {
+            cmp = a.memberName.localeCompare(b.memberName, 'ar');
+        }
+        return sortDir === 'asc' ? cmp : -cmp;
+    });
+
+    const totalPages = Math.ceil(sorted.length / 10);
 
     const typeLabels: Record<string, { label: string; class: string; icon: React.ReactNode }> = {
         purchase: {
@@ -130,7 +168,7 @@ const TransactionsPage: React.FC = () => {
                     <button
                         id="export-transactions-btn"
                         onClick={handleExportTransactions}
-                        className="border border-slate-200 text-slate-600 hover:text-slate-800 hover:bg-slate-50 px-4 py-3 rounded-xl font-bold text-sm transition-all flex items-center gap-2"
+                        className="border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:text-slate-800 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-slate-700/50 px-4 py-3 rounded-xl font-bold text-sm transition-all flex items-center gap-2"
                     >
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
@@ -140,7 +178,7 @@ const TransactionsPage: React.FC = () => {
                     <button
                         id="export-transactions-pdf-btn"
                         onClick={handleExportPDF}
-                        className="border border-red-200 text-red-500 hover:text-red-700 hover:bg-red-50 px-4 py-3 rounded-xl font-bold text-sm transition-all flex items-center gap-2"
+                        className="border border-red-200 dark:border-red-900/30 text-red-500 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 hover:bg-red-50 dark:hover:bg-red-950/20 px-4 py-3 rounded-xl font-bold text-sm transition-all flex items-center gap-2"
                     >
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
@@ -155,42 +193,42 @@ const TransactionsPage: React.FC = () => {
                 <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 p-5 relative group hover:shadow-lg hover:shadow-cyan-100/40 hover:-translate-y-1 transition-all duration-300">
                     <div className="absolute top-0 left-3 right-3 h-[2px] bg-gradient-to-r from-cyan-500 to-teal-500 rounded-full opacity-0 group-hover:opacity-80 transition-opacity duration-300" />
                     <div className="flex items-center gap-3 mb-3">
-                        <div className="w-10 h-10 bg-cyan-50 rounded-xl flex items-center justify-center text-cyan-500 shadow-sm group-hover:scale-110 transition-transform">
+                        <div className="w-10 h-10 bg-cyan-50 dark:bg-cyan-950/20 rounded-xl flex items-center justify-center text-cyan-500 dark:text-cyan-455 shadow-sm group-hover:scale-110 transition-transform">
                             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4" /></svg>
                         </div>
-                        <span className="text-xs text-slate-500 font-bold">المشتريات</span>
+                        <span className="text-xs text-slate-500 dark:text-slate-400 font-bold">المشتريات</span>
                     </div>
                     <p className="text-xl font-black text-slate-900 dark:text-white font-tabular">{formatCurrency(totalPurchases)}</p>
                 </div>
-                <div className="bg-white rounded-2xl border border-slate-100 p-5 relative group hover:shadow-lg hover:shadow-emerald-100/40 hover:-translate-y-1 transition-all duration-300">
+                <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 p-5 relative group hover:shadow-lg hover:shadow-emerald-100/40 hover:-translate-y-1 transition-all duration-300">
                     <div className="absolute top-0 left-3 right-3 h-[2px] bg-gradient-to-r from-emerald-500 to-green-500 rounded-full opacity-0 group-hover:opacity-80 transition-opacity duration-300" />
                     <div className="flex items-center gap-3 mb-3">
-                        <div className="w-10 h-10 bg-emerald-50 rounded-xl flex items-center justify-center text-emerald-500 shadow-sm group-hover:scale-110 transition-transform">
+                        <div className="w-10 h-10 bg-emerald-50 dark:bg-emerald-950/20 rounded-xl flex items-center justify-center text-emerald-500 dark:text-emerald-455 shadow-sm group-hover:scale-110 transition-transform">
                             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9" /></svg>
                         </div>
-                        <span className="text-xs text-slate-500 font-bold">التجديدات</span>
+                        <span className="text-xs text-slate-500 dark:text-slate-400 font-bold">التجديدات</span>
                     </div>
                     <p className="text-xl font-black text-slate-900 dark:text-white font-tabular">{formatCurrency(totalRenewals)}</p>
                 </div>
-                <div className="bg-white rounded-2xl border border-slate-100 p-5 relative group hover:shadow-lg hover:shadow-amber-100/40 hover:-translate-y-1 transition-all duration-300">
+                <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 p-5 relative group hover:shadow-lg hover:shadow-amber-100/40 hover:-translate-y-1 transition-all duration-300">
                     <div className="absolute top-0 left-3 right-3 h-[2px] bg-gradient-to-r from-amber-500 to-yellow-500 rounded-full opacity-0 group-hover:opacity-80 transition-opacity duration-300" />
                     <div className="flex items-center gap-3 mb-3">
-                        <div className="w-10 h-10 bg-amber-50 rounded-xl flex items-center justify-center text-amber-500 shadow-sm group-hover:scale-110 transition-transform">
+                        <div className="w-10 h-10 bg-amber-50 dark:bg-amber-950/20 rounded-xl flex items-center justify-center text-amber-500 dark:text-amber-455 shadow-sm group-hover:scale-110 transition-transform">
                             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2" /></svg>
                         </div>
-                        <span className="text-xs text-slate-500 font-bold">كاش باك</span>
+                        <span className="text-xs text-slate-500 dark:text-slate-400 font-bold">كاش باك</span>
                     </div>
-                    <p className="text-xl font-black text-emerald-600 font-tabular">{formatCurrency(totalCashback)}</p>
+                    <p className="text-xl font-black text-emerald-600 dark:text-emerald-400 font-tabular">{formatCurrency(totalCashback)}</p>
                 </div>
-                <div className="bg-white rounded-2xl border border-slate-100 p-5 relative group hover:shadow-lg hover:shadow-red-100/40 hover:-translate-y-1 transition-all duration-300">
+                <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 p-5 relative group hover:shadow-lg hover:shadow-red-100/40 hover:-translate-y-1 transition-all duration-300">
                     <div className="absolute top-0 left-3 right-3 h-[2px] bg-gradient-to-r from-red-500 to-rose-500 rounded-full opacity-0 group-hover:opacity-80 transition-opacity duration-300" />
                     <div className="flex items-center gap-3 mb-3">
-                        <div className="w-10 h-10 bg-red-50 rounded-xl flex items-center justify-center text-red-500 shadow-sm group-hover:scale-110 transition-transform">
+                        <div className="w-10 h-10 bg-red-50 dark:bg-red-950/20 rounded-xl flex items-center justify-center text-red-500 dark:text-red-455 shadow-sm group-hover:scale-110 transition-transform">
                             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 15v-1a4 4 0 00-4-4H8m0 0l3 3m-3-3l3-3" /></svg>
                         </div>
-                        <span className="text-xs text-slate-500 font-bold">الاسترجاعات</span>
+                        <span className="text-xs text-slate-500 dark:text-slate-400 font-bold">الاسترجاعات</span>
                     </div>
-                    <p className="text-xl font-black text-red-600 font-tabular">{formatCurrency(totalRefunds)}</p>
+                    <p className="text-xl font-black text-red-650 dark:text-red-400 font-tabular">{formatCurrency(totalRefunds)}</p>
                 </div>
             </div>
 
@@ -207,25 +245,25 @@ const TransactionsPage: React.FC = () => {
                             <input
                                 type="text"
                                 value={search}
-                                onChange={e => setSearch(e.target.value)}
+                                onChange={e => { setSearch(e.target.value); setCurrentPage(1); }}
                                 placeholder="ابحث بالاسم أو الوصف..."
-                                className={`w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/10 transition-all font-bold ${search ? 'pr-4' : 'pr-12'}`}
+                                className="w-full bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3 text-sm text-slate-800 dark:text-slate-200 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/10 transition-all pr-12"
                             />
                         </div>
                         <select
                             value={filterType}
-                            onChange={e => setFilterType(e.target.value)}
-                            className="bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-800 focus:outline-none focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/10 transition-all min-w-[160px] font-bold"
+                            onChange={e => { setFilterType(e.target.value); setCurrentPage(1); }}
+                            className="bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3 text-sm text-slate-800 dark:text-slate-200 focus:outline-none focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/10 transition-all min-w-[160px] font-bold"
                         >
-                            <option value="all">كل العمليات</option>
-                            <option value="purchase">شراء</option>
-                            <option value="renewal">تجديد</option>
-                            <option value="cashback">كاش باك</option>
-                            <option value="refund">استرجاع</option>
+                            <option value="all" className="dark:bg-slate-800">كل العمليات</option>
+                            <option value="purchase" className="dark:bg-slate-800">شراء</option>
+                            <option value="renewal" className="dark:bg-slate-800">تجديد</option>
+                            <option value="cashback" className="dark:bg-slate-800">كاش باك</option>
+                            <option value="refund" className="dark:bg-slate-800">استرجاع</option>
                         </select>
                     </div>
 
-                    <div className="flex flex-col sm:flex-row items-center gap-4 border-t border-slate-100 pt-4 mt-2">
+                    <div className="flex flex-col sm:flex-row items-center gap-4 border-t border-slate-100 dark:border-slate-700 pt-4 mt-2">
                         <div className="w-full sm:w-auto flex-1">
                             <div className="flex flex-wrap gap-2">
                                 {['all', 'today', 'week', 'month', 'custom'].map(r => {
@@ -235,10 +273,10 @@ const TransactionsPage: React.FC = () => {
                                     return (
                                         <button
                                             key={r}
-                                            onClick={() => setDateRange(r)}
+                                            onClick={() => { setDateRange(r); setCurrentPage(1); }}
                                             className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${dateRange === r
                                                 ? 'bg-gradient-to-r from-cyan-600 to-teal-600 text-white shadow-md'
-                                                : 'bg-slate-50 text-slate-500 hover:bg-slate-200 border border-slate-200/60'
+                                                : 'bg-slate-50 dark:bg-slate-900/40 text-slate-500 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700 border border-slate-200/60 dark:border-slate-700'
                                                 }`}
                                         >
                                             {labels[r]}
@@ -248,23 +286,23 @@ const TransactionsPage: React.FC = () => {
                             </div>
                         </div>
                         {dateRange === 'custom' && (
-                            <div className="flex items-center gap-3 w-full sm:w-auto bg-slate-50/50 p-2 rounded-xl border border-slate-100">
+                            <div className="flex items-center gap-3 w-full sm:w-auto bg-slate-50/50 dark:bg-slate-900/40 p-2 rounded-xl border border-slate-100 dark:border-slate-700">
                                 <div className="flex items-center gap-2">
-                                    <label className="text-xs text-slate-500 font-bold uppercase tracking-wider">من</label>
+                                    <label className="text-xs text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider">من</label>
                                     <input
                                         type="date"
                                         value={dateFrom}
-                                        onChange={e => setDateFrom(e.target.value)}
-                                        className="bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/10 transition-all font-tabular"
+                                        onChange={e => { setDateFrom(e.target.value); setCurrentPage(1); }}
+                                        className="bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-750 rounded-xl px-4 py-2.5 text-sm text-slate-800 dark:text-slate-200 focus:outline-none focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/10 transition-all font-tabular"
                                     />
                                 </div>
                                 <div className="flex items-center gap-2">
-                                    <label className="text-xs text-slate-400 font-bold">إلى</label>
+                                    <label className="text-xs text-slate-400 dark:text-slate-500 font-bold">إلى</label>
                                     <input
                                         type="date"
                                         value={dateTo}
-                                        onChange={e => setDateTo(e.target.value)}
-                                        className="bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/10 transition-all font-tabular"
+                                        onChange={e => { setDateTo(e.target.value); setCurrentPage(1); }}
+                                        className="bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-750 rounded-xl px-4 py-2.5 text-sm text-slate-800 dark:text-slate-200 focus:outline-none focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/10 transition-all font-tabular"
                                     />
                                 </div>
                             </div>
@@ -273,21 +311,21 @@ const TransactionsPage: React.FC = () => {
                 </div>
 
                 {/* Transactions Table */}
-                <div className="bg-white rounded-3xl border border-slate-100 overflow-hidden  shadow-sm">
+                <div className="bg-white dark:bg-slate-800 rounded-3xl border border-slate-100 dark:border-slate-700 overflow-hidden shadow-sm">
                     <div className="overflow-x-auto">
                         <table className="w-full">
                             <thead>
-                                <tr className="bg-slate-50/80 backdrop-blur-sm border-b border-slate-100">
-                                    <th className="text-right px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">النوع</th>
-                                    <th className="text-right px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">العضو</th>
-                                    <th className="text-right px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">الوصف</th>
-                                    <th className="text-right px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">المبلغ</th>
-                                    <th className="text-right px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">كاش باك</th>
-                                    <th className="text-right px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">التاريخ</th>
+                                <tr className="bg-slate-50/80 dark:bg-slate-700/50 backdrop-blur-sm border-b border-slate-100 dark:border-slate-700">
+                                    <th onClick={() => handleSort('type')} className="text-right px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider cursor-pointer hover:text-cyan-600 select-none">النوع <SortIcon col="type" /></th>
+                                    <th onClick={() => handleSort('memberName')} className="text-right px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider cursor-pointer hover:text-cyan-600 select-none">العضو <SortIcon col="memberName" /></th>
+                                    <th className="text-right px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">الوصف</th>
+                                    <th onClick={() => handleSort('amount')} className="text-right px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider cursor-pointer hover:text-cyan-600 select-none">المبلغ <SortIcon col="amount" /></th>
+                                    <th onClick={() => handleSort('cashback')} className="text-right px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider cursor-pointer hover:text-cyan-600 select-none">كاش باك <SortIcon col="cashback" /></th>
+                                    <th onClick={() => handleSort('date')} className="text-right px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider cursor-pointer hover:text-cyan-600 select-none">التاريخ <SortIcon col="date" /></th>
                                 </tr>
                             </thead>
-                            <tbody className="divide-y divide-slate-50 relative">
-                                {filtered.map((trx, index) => {
+                            <tbody className="divide-y divide-slate-50 dark:divide-slate-700 relative">
+                                {(sorted.slice((currentPage - 1) * 10, currentPage * 10)).map((trx, index) => {
                                     const tl = typeLabels[trx.type];
                                     return (
                                         <tr key={trx.id} className="hover:bg-cyan-50/30 transition-colors group relative" style={{ animationDelay: `${index * 30}ms` }}>
@@ -299,23 +337,23 @@ const TransactionsPage: React.FC = () => {
                                                 </span>
                                             </td>
                                             <td className="px-6 py-4">
-                                                <p className="text-sm font-bold text-slate-800">{trx.memberName}</p>
+                                                <p className="text-sm font-bold text-slate-800 dark:text-slate-200">{trx.memberName}</p>
                                             </td>
                                             <td className="px-6 py-4">
-                                                <p className="text-sm text-slate-500">{trx.description}</p>
+                                                <p className="text-sm text-slate-500 dark:text-slate-400">{trx.description}</p>
                                             </td>
                                             <td className="px-6 py-4">
-                                                <p className={`text-sm font-black font-tabular ${trx.type === 'refund' ? 'text-red-500' : 'text-slate-800'}`}>
+                                                <p className={`text-sm font-black font-tabular ${trx.type === 'refund' ? 'text-red-500' : 'text-slate-800 dark:text-slate-200'}`}>
                                                     {trx.type === 'refund' ? '-' : ''}{formatCurrency(trx.amount)}
                                                 </p>
                                             </td>
                                             <td className="px-6 py-4">
-                                                <p className={`text-sm font-bold ${trx.cashback > 0 ? 'text-emerald-600' : trx.cashback < 0 ? 'text-red-500' : 'text-slate-300'}`}>
+                                                <p className={`text-sm font-bold ${trx.cashback > 0 ? 'text-emerald-600 dark:text-emerald-450' : trx.cashback < 0 ? 'text-red-500' : 'text-slate-350 dark:text-slate-600'}`}>
                                                     {trx.cashback !== 0 ? formatCurrency(Math.abs(trx.cashback)) : '—'}
                                                 </p>
                                             </td>
                                             <td className="px-6 py-4">
-                                                <p className="text-xs text-slate-500">{formatDate(trx.date)}</p>
+                                                <p className="text-xs text-slate-500 dark:text-slate-400">{formatDate(trx.date)}</p>
                                             </td>
                                         </tr>
                                     );
@@ -326,10 +364,47 @@ const TransactionsPage: React.FC = () => {
 
                     {filtered.length === 0 && (
                         <div className="p-12 text-center">
-                            <p className="text-slate-500 font-bold">لا توجد عمليات</p>
+                            <p className="text-slate-500 dark:text-slate-400 font-bold">لا توجد عمليات</p>
                         </div>
                     )}
                 </div>
+
+                {/* Pagination */}
+                {totalPages > 1 && (
+                    <div className="flex items-center justify-between bg-white dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 px-6 py-4 mt-6">
+                        <p className="text-xs text-slate-400 dark:text-slate-500">
+                            عرض {(currentPage - 1) * 10 + 1}-{Math.min(currentPage * 10, filtered.length)} من {filtered.length}
+                        </p>
+                        <div className="flex items-center gap-1">
+                            <button
+                                onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                                disabled={currentPage === 1}
+                                className="px-3 py-2 rounded-lg text-xs font-bold transition-all disabled:opacity-30 disabled:cursor-not-allowed hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300"
+                            >
+                                السابق
+                            </button>
+                            {Array.from({ length: totalPages }, (_, i) => i + 1).map(p => (
+                                <button
+                                    key={p}
+                                    onClick={() => setCurrentPage(p)}
+                                    className={`w-8 h-8 rounded-lg text-xs font-bold transition-all ${currentPage === p
+                                        ? 'bg-cyan-500 text-white'
+                                        : 'text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700'
+                                        }`}
+                                >
+                                    {p}
+                                </button>
+                            ))}
+                            <button
+                                onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                                disabled={currentPage === totalPages}
+                                className="px-3 py-2 rounded-lg text-xs font-bold transition-all disabled:opacity-30 disabled:cursor-not-allowed hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300"
+                            >
+                                التالي
+                            </button>
+                        </div>
+                    </div>
+                )}
             </div>
         </div>
     );

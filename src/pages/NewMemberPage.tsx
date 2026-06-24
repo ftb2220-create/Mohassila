@@ -7,7 +7,7 @@ import type { TierType } from '../types';
 import { getPermissions } from '../utils/permissions';
 
 const NewMemberPage: React.FC = () => {
-    const { addMember } = useMembers();
+    const { addMember, members } = useMembers();
     const { employee } = useAuth();
     const navigate = useNavigate();
     const permissions = getPermissions(employee?.role);
@@ -48,10 +48,13 @@ const NewMemberPage: React.FC = () => {
         if (!form.name.trim()) errs.name = 'الاسم مطلوب';
         if (!form.phone.trim()) errs.phone = 'رقم الجوال مطلوب';
         else if (!/^05\d{8}$/.test(form.phone)) errs.phone = 'صيغة الجوال غير صحيحة (05XXXXXXXX)';
+        else if (members.some(m => m.phone === form.phone.trim())) errs.phone = 'رقم الجوال مسجل مسبقاً لعضو آخر';
         if (!form.email.trim()) errs.email = 'البريد الإلكتروني مطلوب';
         else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) errs.email = 'صيغة البريد غير صحيحة';
+        else if (members.some(m => m.email === form.email.trim())) errs.email = 'البريد الإلكتروني مسجل مسبقاً لعضو آخر';
         if (!form.nationalId.trim()) errs.nationalId = 'رقم الهوية مطلوب';
         else if (!/^[12]\d{9}$/.test(form.nationalId)) errs.nationalId = 'رقم الهوية يجب أن يبدأ بـ 1 أو 2 ويتكون من 10 أرقام';
+        else if (members.some(m => m.nationalId === form.nationalId.trim())) errs.nationalId = 'رقم الهوية مسجل مسبقاً لعضو آخر';
         setErrors(errs);
         return Object.keys(errs).length === 0;
     };
@@ -118,13 +121,13 @@ const NewMemberPage: React.FC = () => {
         return (
             <div className="flex items-center justify-center h-96">
                 <div className="text-center hero-fade-in">
-                    <div className="w-20 h-20 bg-emerald-50 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                        <svg className="w-10 h-10 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div className="w-20 h-20 bg-emerald-50 dark:bg-emerald-950/20 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                        <svg className="w-10 h-10 text-emerald-500 dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
                     </div>
-                    <h2 className="text-2xl font-black text-slate-900">تم التسجيل بنجاح! 🎉</h2>
-                    <p className="text-sm text-slate-500 mt-2">جاري التحويل لصفحة العضو...</p>
+                    <h2 className="text-2xl font-black text-slate-900 dark:text-white">تم التسجيل بنجاح! 🎉</h2>
+                    <p className="text-sm text-slate-500 dark:text-slate-400 mt-2">جاري التحويل لصفحة العضو...</p>
                 </div>
             </div>
         );
@@ -135,12 +138,12 @@ const NewMemberPage: React.FC = () => {
             {/* Header */}
             <div className="flex items-center justify-between">
                 <div>
-                    <h1 className="text-2xl font-black text-slate-900">تسجيل عضو جديد</h1>
-                    <p className="text-sm text-slate-400 mt-1">أضف عضو جديد لنظام محصّلة</p>
+                    <h1 className="text-2xl font-black text-slate-900 dark:text-white">تسجيل عضو جديد</h1>
+                    <p className="text-sm text-slate-400 dark:text-slate-500 mt-1">أضف عضو جديد لنظام محصّلة</p>
                 </div>
                 <button
                     onClick={() => navigate('/dashboard/members')}
-                    className="text-slate-500 hover:text-slate-700 font-medium text-sm flex items-center gap-2"
+                    className="text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 font-medium text-sm flex items-center gap-2"
                 >
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
@@ -151,8 +154,8 @@ const NewMemberPage: React.FC = () => {
 
             <form onSubmit={handleSubmit} className="space-y-6">
                 {/* Tier Selection */}
-                <div className="bg-white rounded-3xl border border-slate-100 p-8  shadow-sm">
-                    <h3 className="font-bold text-slate-900 mb-6 text-lg">اختر نوع العضوية</h3>
+                <div className="bg-white dark:bg-slate-800 rounded-3xl border border-slate-100 dark:border-slate-700 p-8 shadow-sm">
+                    <h3 className="font-bold text-slate-900 dark:text-white mb-6 text-lg">اختر نوع العضوية</h3>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         {tierOptions.map(option => (
                             <div
@@ -160,7 +163,7 @@ const NewMemberPage: React.FC = () => {
                                 onClick={() => setForm(f => ({ ...f, tier: option.value }))}
                                 className={`border-2 rounded-2xl p-5 cursor-pointer transition-all duration-300 ${form.tier === option.value
                                     ? `${option.border} ring-2 ${option.selected} shadow-lg`
-                                    : 'border-slate-200 hover:border-slate-300'
+                                    : 'border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-650'
                                     }`}
                             >
                                 <div className="flex items-center gap-3 mb-3">
@@ -168,13 +171,13 @@ const NewMemberPage: React.FC = () => {
                                         {option.value === 'gold' ? 'G' : 'S'}
                                     </div>
                                     <div>
-                                        <p className="font-bold text-slate-800">{option.label}</p>
-                                        <p className="text-xs text-slate-400">{option.price}</p>
+                                        <p className="font-bold text-slate-800 dark:text-slate-200">{option.label}</p>
+                                        <p className="text-xs text-slate-400 dark:text-slate-500">{option.price}</p>
                                     </div>
                                 </div>
                                 <ul className="space-y-1.5">
                                     {option.features.map((f, i) => (
-                                        <li key={i} className="text-xs text-slate-500 flex items-center gap-2">
+                                        <li key={i} className="text-xs text-slate-500 dark:text-slate-400 flex items-center gap-2">
                                             <svg className="w-3 h-3 text-emerald-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7" />
                                             </svg>
@@ -188,17 +191,17 @@ const NewMemberPage: React.FC = () => {
                 </div>
 
                 {/* Personal Info */}
-                <div className="bg-white rounded-3xl border border-slate-100 p-8  shadow-sm">
-                    <h3 className="font-bold text-slate-900 mb-8 text-lg">البيانات الشخصية</h3>
+                <div className="bg-white dark:bg-slate-800 rounded-3xl border border-slate-100 dark:border-slate-700 p-8 shadow-sm">
+                    <h3 className="font-bold text-slate-900 dark:text-white mb-8 text-lg">البيانات الشخصية</h3>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                         {/* Name */}
                         <div className="sm:col-span-2">
-                            <label className="block text-sm font-bold text-slate-700 mb-2">الاسم الكامل *</label>
+                            <label className="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2">الاسم الكامل *</label>
                             <input
                                 type="text"
                                 value={form.name}
                                 onChange={e => setForm(f => ({ ...f, name: e.target.value }))}
-                                className={`w-full bg-slate-50/50 border rounded-2xl px-4 py-3.5 text-sm focus:outline-none focus:ring-4 transition-all ${errors.name ? 'border-red-300 focus:border-red-500 focus:ring-red-500/10' : 'border-slate-200 focus:border-cyan-500 focus:ring-cyan-500/10'
+                                className={`w-full bg-slate-50/50 dark:bg-slate-900/50 border rounded-2xl px-4 py-3.5 text-sm focus:outline-none focus:ring-4 transition-all dark:text-white ${errors.name ? 'border-red-300 dark:border-red-900/50 focus:border-red-500 focus:ring-red-500/10' : 'border-slate-200 dark:border-slate-700 focus:border-cyan-500 focus:ring-cyan-500/10'
                                     }`}
                                 placeholder="الاسم الرباعي"
                             />
@@ -207,12 +210,12 @@ const NewMemberPage: React.FC = () => {
 
                         {/* Phone */}
                         <div>
-                            <label className="block text-sm font-bold text-slate-700 mb-2">رقم الجوال *</label>
+                            <label className="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2">رقم الجوال *</label>
                             <input
                                 type="tel"
                                 value={form.phone}
                                 onChange={e => setForm(f => ({ ...f, phone: e.target.value }))}
-                                className={`w-full bg-slate-50/50 border rounded-2xl px-4 py-3.5 text-sm focus:outline-none focus:ring-4 transition-all font-mono ${errors.phone ? 'border-red-300 focus:border-red-500 focus:ring-red-500/10' : 'border-slate-200 focus:border-cyan-500 focus:ring-cyan-500/10'
+                                className={`w-full bg-slate-50/50 dark:bg-slate-900/50 border rounded-2xl px-4 py-3.5 text-sm focus:outline-none focus:ring-4 transition-all font-mono dark:text-white ${errors.phone ? 'border-red-300 dark:border-red-900/50 focus:border-red-500 focus:ring-red-500/10' : 'border-slate-200 dark:border-slate-700 focus:border-cyan-500 focus:ring-cyan-500/10'
                                     }`}
                                 placeholder="05XXXXXXXX"
                                 dir="ltr"
@@ -222,12 +225,12 @@ const NewMemberPage: React.FC = () => {
 
                         {/* National ID */}
                         <div>
-                            <label className="block text-sm font-bold text-slate-700 mb-2">رقم الهوية *</label>
+                            <label className="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2">رقم الهوية *</label>
                             <input
                                 type="text"
                                 value={form.nationalId}
                                 onChange={e => setForm(f => ({ ...f, nationalId: e.target.value }))}
-                                className={`w-full bg-slate-50/50 border rounded-2xl px-4 py-3.5 text-sm focus:outline-none focus:ring-4 transition-all font-mono ${errors.nationalId ? 'border-red-300 focus:border-red-500 focus:ring-red-500/10' : 'border-slate-200 focus:border-cyan-500 focus:ring-cyan-500/10'
+                                className={`w-full bg-slate-50/50 dark:bg-slate-900/50 border rounded-2xl px-4 py-3.5 text-sm focus:outline-none focus:ring-4 transition-all font-mono dark:text-white ${errors.nationalId ? 'border-red-300 dark:border-red-900/50 focus:border-red-500 focus:ring-red-500/10' : 'border-slate-200 dark:border-slate-700 focus:border-cyan-500 focus:ring-cyan-500/10'
                                     }`}
                                 placeholder="1XXXXXXXXX"
                                 dir="ltr"
@@ -237,12 +240,12 @@ const NewMemberPage: React.FC = () => {
 
                         {/* Email */}
                         <div>
-                            <label className="block text-sm font-bold text-slate-700 mb-2">البريد الإلكتروني *</label>
+                            <label className="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2">البريد الإلكتروني *</label>
                             <input
                                 type="email"
                                 value={form.email}
                                 onChange={e => setForm(f => ({ ...f, email: e.target.value }))}
-                                className={`w-full bg-slate-50/50 border rounded-2xl px-4 py-3.5 text-sm focus:outline-none focus:ring-4 transition-all font-mono ${errors.email ? 'border-red-300 focus:border-red-500 focus:ring-red-500/10' : 'border-slate-200 focus:border-cyan-500 focus:ring-cyan-500/10'
+                                className={`w-full bg-slate-50/50 dark:bg-slate-900/50 border rounded-2xl px-4 py-3.5 text-sm focus:outline-none focus:ring-4 transition-all font-mono dark:text-white ${errors.email ? 'border-red-300 dark:border-red-900/50 focus:border-red-500 focus:ring-red-500/10' : 'border-slate-200 dark:border-slate-700 focus:border-cyan-500 focus:ring-cyan-500/10'
                                     }`}
                                 placeholder="example@email.com"
                                 dir="ltr"
@@ -252,25 +255,25 @@ const NewMemberPage: React.FC = () => {
 
                         {/* City */}
                         <div>
-                            <label className="block text-sm font-bold text-slate-700 mb-2">المدينة</label>
+                            <label className="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2">المدينة</label>
                             <select
                                 value={form.city}
                                 onChange={e => setForm(f => ({ ...f, city: e.target.value }))}
-                                className="w-full bg-slate-50/50 border border-slate-200 rounded-2xl px-4 py-3.5 text-sm focus:outline-none focus:border-cyan-500 focus:ring-4 focus:ring-cyan-500/10 transition-all font-bold"
+                                className="w-full bg-slate-50/50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-2xl px-4 py-3.5 text-sm focus:outline-none focus:border-cyan-500 focus:ring-4 focus:ring-cyan-500/10 transition-all font-bold dark:text-white"
                             >
                                 {SAUDI_CITIES.map(city => (
-                                    <option key={city} value={city}>{city}</option>
+                                    <option key={city} value={city} className="dark:bg-slate-800">{city}</option>
                                 ))}
                             </select>
                         </div>
 
                         {/* Notes */}
                         <div className="sm:col-span-2">
-                            <label className="block text-sm font-bold text-slate-700 mb-2">ملاحظات</label>
+                            <label className="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2">ملاحظات</label>
                             <textarea
                                 value={form.notes}
                                 onChange={e => setForm(f => ({ ...f, notes: e.target.value }))}
-                                className="w-full bg-slate-50/50 border border-slate-200 rounded-2xl px-4 py-3.5 text-sm focus:outline-none focus:border-cyan-500 focus:ring-4 focus:ring-cyan-500/10 transition-all resize-none"
+                                className="w-full bg-slate-50/50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-2xl px-4 py-3.5 text-sm focus:outline-none focus:border-cyan-500 focus:ring-4 focus:ring-cyan-500/10 transition-all resize-none dark:text-white"
                                 rows={3}
                                 placeholder="ملاحظات إضافية (اختياري)"
                             />
@@ -279,20 +282,20 @@ const NewMemberPage: React.FC = () => {
                 </div>
 
                 {/* Summary & Submit */}
-                <div className="bg-white rounded-3xl border border-slate-100 p-8  shadow-sm">
-                    <h3 className="font-bold text-slate-900 mb-6 text-lg">ملخص التسجيل</h3>
-                    <div className="bg-slate-50/80 rounded-2xl p-6 mb-8 space-y-4 border border-slate-100">
+                <div className="bg-white dark:bg-slate-800 rounded-3xl border border-slate-100 dark:border-slate-700 p-8 shadow-sm">
+                    <h3 className="font-bold text-slate-900 dark:text-white mb-6 text-lg">ملخص التسجيل</h3>
+                    <div className="bg-slate-50/80 dark:bg-slate-900/30 rounded-2xl p-6 mb-8 space-y-4 border border-slate-100 dark:border-slate-700">
                         <div className="flex items-center justify-between text-sm">
-                            <span className="text-slate-500 font-bold">نوع العضوية</span>
-                            <span className="font-black text-slate-800">{form.tier === 'gold' ? 'الذهبية' : 'الفضية'}</span>
+                            <span className="text-slate-500 dark:text-slate-400 font-bold">نوع العضوية</span>
+                            <span className="font-black text-slate-800 dark:text-slate-200">{form.tier === 'gold' ? 'الذهبية' : 'الفضية'}</span>
                         </div>
                         <div className="flex items-center justify-between text-sm">
-                            <span className="text-slate-500 font-bold">رسوم العضوية</span>
-                            <span className="font-black text-slate-800 font-tabular">{form.tier === 'gold' ? '399' : '199'} ر.س</span>
+                            <span className="text-slate-500 dark:text-slate-400 font-bold">رسوم العضوية</span>
+                            <span className="font-black text-slate-800 dark:text-slate-200 font-tabular">{form.tier === 'gold' ? '399' : '199'} ر.س</span>
                         </div>
                         <div className="flex items-center justify-between text-sm">
-                            <span className="text-slate-500 font-bold">مدة العضوية</span>
-                            <span className="font-black text-slate-800">سنة واحدة</span>
+                            <span className="text-slate-500 dark:text-slate-400 font-bold">مدة العضوية</span>
+                            <span className="font-black text-slate-800 dark:text-slate-200">سنة واحدة</span>
                         </div>
                     </div>
                     <button

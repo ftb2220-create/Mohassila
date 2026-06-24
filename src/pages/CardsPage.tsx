@@ -7,7 +7,7 @@ import { formatDate } from '../data/mockData';
 import { getPermissions } from '../utils/permissions';
 
 const CardsPage: React.FC = () => {
-    const { members } = useMembers();
+    const { members, updateCardStatus, issueCard } = useMembers();
     const { employee } = useAuth();
     const navigate = useNavigate();
     const permissions = getPermissions(employee?.role);
@@ -32,6 +32,7 @@ const CardsPage: React.FC = () => {
     const [selectedCard, setSelectedCard] = useState<string | null>(null);
     const [filterTier, setFilterTier] = useState<string>('all');
     const [filterStatus, setFilterStatus] = useState<string>('all');
+    const [currentPage, setCurrentPage] = useState(1);
     const printRef = useRef<HTMLDivElement>(null);
 
     // Collect all cards with member info
@@ -61,11 +62,14 @@ const CardsPage: React.FC = () => {
         filteredCards = filteredCards.filter(c => c.status === filterStatus);
     }
 
+    const totalPages = Math.ceil(filteredCards.length / 9);
+
+
     const cardStatusConfig: Record<string, { label: string; class: string }> = {
-        active: { label: 'نشطة', class: 'bg-emerald-100 text-emerald-700' },
-        inactive: { label: 'غير نشطة', class: 'bg-slate-100 text-slate-600' },
-        lost: { label: 'مفقودة', class: 'bg-red-100 text-red-700' },
-        replaced: { label: 'مُستبدلة', class: 'bg-blue-100 text-blue-700' },
+        active: { label: 'نشطة', class: 'bg-emerald-100 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-450' },
+        inactive: { label: 'غير نشطة', class: 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400' },
+        lost: { label: 'مفقودة', class: 'bg-red-100 dark:bg-red-950/40 text-red-700 dark:text-red-400' },
+        replaced: { label: 'مُستبدلة', class: 'bg-blue-100 dark:bg-blue-950/40 text-blue-700 dark:text-blue-400' },
     };
 
     const handlePrint = () => {
@@ -166,36 +170,37 @@ const CardsPage: React.FC = () => {
                         <input
                             type="text"
                             value={search}
-                            onChange={e => setSearch(e.target.value)}
+                            onChange={e => { setSearch(e.target.value); setCurrentPage(1); }}
                             placeholder="ابحث برقم البطاقة أو اسم الحامل..."
-                            className={`w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/10 transition-all ${search ? 'pr-4' : 'pr-12'}`}
+                            className="w-full bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3 text-sm text-slate-800 dark:text-slate-200 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/10 transition-all pr-12"
                         />
                     </div>
                     <select
                         value={filterTier}
-                        onChange={e => setFilterTier(e.target.value)}
-                        className="bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-800 focus:outline-none focus:border-cyan-500 min-w-[130px]"
+                        onChange={e => { setFilterTier(e.target.value); setCurrentPage(1); }}
+                        className="bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3 text-sm text-slate-800 dark:text-slate-200 focus:outline-none focus:border-cyan-500 min-w-[130px]"
                     >
-                        <option value="all">كل الفئات</option>
-                        <option value="silver">الفضية</option>
-                        <option value="gold">الذهبية</option>
+                        <option value="all" className="dark:bg-slate-800">كل الفئات</option>
+                        <option value="silver" className="dark:bg-slate-800">الفضية</option>
+                        <option value="gold" className="dark:bg-slate-800">الذهبية</option>
                     </select>
                     <select
                         value={filterStatus}
-                        onChange={e => setFilterStatus(e.target.value)}
-                        className="bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-800 focus:outline-none focus:border-cyan-500 min-w-[130px]"
+                        onChange={e => { setFilterStatus(e.target.value); setCurrentPage(1); }}
+                        className="bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3 text-sm text-slate-800 dark:text-slate-200 focus:outline-none focus:border-cyan-500 min-w-[130px]"
                     >
-                        <option value="all">كل الحالات</option>
-                        <option value="active">نشطة</option>
-                        <option value="inactive">غير نشطة</option>
-                        <option value="lost">مفقودة</option>
+                        <option value="all" className="dark:bg-slate-800">كل الحالات</option>
+                        <option value="active" className="dark:bg-slate-800">نشطة</option>
+                        <option value="inactive" className="dark:bg-slate-800">غير نشطة</option>
+                        <option value="lost" className="dark:bg-slate-800">مفقودة</option>
+                        <option value="replaced" className="dark:bg-slate-800">مُستبدلة</option>
                     </select>
                 </div>
             </div>
 
             {/* Cards Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5" ref={printRef}>
-                {filteredCards.map((card, index) => {
+                {(filteredCards.slice((currentPage - 1) * 9, currentPage * 9)).map((card, index) => {
                     const cs = cardStatusConfig[card.status];
                     const isSelected = selectedCard === card.id;
                     return (
@@ -203,7 +208,7 @@ const CardsPage: React.FC = () => {
                             key={card.id}
                             onClick={() => setSelectedCard(isSelected ? null : card.id)}
                             style={{ animationDelay: `${index * 50}ms` }}
-                            className={`bg-white dark:bg-slate-800 rounded-3xl border-2 p-6 cursor-pointer relative group ${isSelected ? 'border-cyan-500 ring-2 ring-cyan-500/20 shadow-[0_8px_30px_-5px_rgba(6,182,212,0.3)]' : 'border-slate-100 dark:border-slate-700 hover:border-slate-200 dark:hover:border-slate-600'
+                            className={`bg-white dark:bg-slate-800 rounded-3xl border-2 p-6 cursor-pointer relative group transition-all duration-300 ${isSelected ? 'border-cyan-500 ring-2 ring-cyan-500/20 shadow-[0_8px_30px_-5px_rgba(6,182,212,0.3)]' : 'border-slate-100 dark:border-slate-700 hover:border-slate-200 dark:hover:border-slate-600 hover:shadow-lg'
                                 }`}
                         >
 
@@ -222,35 +227,80 @@ const CardsPage: React.FC = () => {
 
                             <div className="space-y-3">
                                 <div className="flex items-center justify-between">
-                                    <span className="text-xs text-slate-400">الحامل</span>
-                                    <span className="text-sm font-bold text-slate-800">{card.holderName}</span>
+                                    <span className="text-xs text-slate-400 dark:text-slate-500">الحامل</span>
+                                    <span className="text-sm font-bold text-slate-800 dark:text-slate-200">{card.holderName}</span>
                                 </div>
                                 <div className="flex items-center justify-between">
-                                    <span className="text-xs text-slate-400">العضو الأساسي</span>
-                                    <span className="text-sm text-slate-600">{card.memberName}</span>
+                                    <span className="text-xs text-slate-400 dark:text-slate-500">العضو الأساسي</span>
+                                    <span className="text-sm text-slate-600 dark:text-slate-400">{card.memberName}</span>
                                 </div>
                                 <div className="flex items-center justify-between">
-                                    <span className="text-xs text-slate-400">النوع</span>
-                                    <span className="text-xs font-bold text-slate-600">
+                                    <span className="text-xs text-slate-400 dark:text-slate-500">النوع</span>
+                                    <span className="text-xs font-bold text-slate-600 dark:text-slate-400">
                                         {card.type === 'primary' ? 'رئيسية' : 'عائلة'}
                                     </span>
                                 </div>
                                 <div className="flex items-center justify-between">
-                                    <span className="text-xs text-slate-400">الحالة</span>
+                                    <span className="text-xs text-slate-400 dark:text-slate-500">الحالة</span>
                                     <span className={`text-xs font-bold px-2.5 py-1 rounded-lg ${cs.class}`}>{cs.label}</span>
                                 </div>
                                 <div className="flex items-center justify-between">
-                                    <span className="text-xs text-slate-400">تاريخ الإصدار</span>
-                                    <span className="text-xs text-slate-600">{formatDate(card.issuedDate)}</span>
+                                    <span className="text-xs text-slate-400 dark:text-slate-500">تاريخ الإصدار</span>
+                                    <span className="text-xs text-slate-600 dark:text-slate-400">{formatDate(card.issuedDate)}</span>
                                 </div>
                             </div>
 
                             {isSelected && (
-                                <div className="mt-4 pt-4 border-t border-slate-100 flex items-center justify-center gap-2 text-cyan-500 text-xs font-bold">
-                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
-                                    </svg>
-                                    محددة للطباعة
+                                <div className="mt-4 pt-4 border-t border-slate-100 dark:border-slate-700 flex flex-wrap gap-2 justify-between" onClick={e => e.stopPropagation()}>
+                                    <div className="flex gap-1.5 w-full mb-1">
+                                        <button
+                                            onClick={(e) => { e.stopPropagation(); handlePrint(); }}
+                                            className="flex-1 bg-cyan-500 hover:bg-cyan-600 text-white py-2.5 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1 shadow-md hover:shadow-lg"
+                                        >
+                                            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" /></svg>
+                                            طباعة بطاقة العضوية
+                                        </button>
+                                    </div>
+                                    <div className="grid grid-cols-3 gap-1.5 w-full mt-1.5">
+                                        <button
+                                            onClick={async (e) => { e.stopPropagation(); try { await updateCardStatus(card.memberId, card.id, 'active', employee?.name); } catch(err) { console.error(err); } }}
+                                            disabled={card.status === 'active'}
+                                            className="bg-emerald-50 dark:bg-emerald-950/20 hover:bg-emerald-100 dark:hover:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400 py-2.5 rounded-xl text-xs font-bold disabled:opacity-40 transition-all border border-emerald-200/40 dark:border-emerald-900/30"
+                                        >
+                                            تفعيل
+                                        </button>
+                                        <button
+                                            onClick={async (e) => { e.stopPropagation(); try { await updateCardStatus(card.memberId, card.id, 'inactive', employee?.name); } catch(err) { console.error(err); } }}
+                                            disabled={card.status === 'inactive'}
+                                            className="bg-slate-50 dark:bg-slate-700/50 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 py-2.5 rounded-xl text-xs font-bold disabled:opacity-40 transition-all border border-slate-200/40 dark:border-slate-600"
+                                        >
+                                            تعطيل
+                                        </button>
+                                        <button
+                                            onClick={async (e) => { e.stopPropagation(); try { await updateCardStatus(card.memberId, card.id, 'lost', employee?.name); } catch(err) { console.error(err); } }}
+                                            disabled={card.status === 'lost' || card.status === 'replaced'}
+                                            className="bg-red-50 dark:bg-red-950/20 hover:bg-red-100 dark:hover:bg-red-950/40 text-red-700 dark:text-red-400 py-2.5 rounded-xl text-xs font-bold disabled:opacity-40 transition-all border border-red-200/40 dark:border-red-900/30"
+                                        >
+                                            مفقودة
+                                        </button>
+                                        <button
+                                            onClick={async (e) => {
+                                                e.stopPropagation();
+                                                if (window.confirm(`هل أنت متأكد من استبدال بطاقة ${card.holderName}؟ سيتم إلغاء البطاقة الحالية وإصدار بطاقة جديدة بديلة.`)) {
+                                                    try {
+                                                        await updateCardStatus(card.memberId, card.id, 'replaced', employee?.name);
+                                                        await issueCard(card.memberId, `${card.holderName} (بديل)`, card.type, employee?.name);
+                                                    } catch(err) {
+                                                        console.error(err);
+                                                    }
+                                                }
+                                            }}
+                                            disabled={card.status === 'replaced'}
+                                            className="col-span-3 bg-blue-50 dark:bg-blue-950/20 hover:bg-blue-100 dark:hover:bg-blue-950/40 text-blue-700 dark:text-blue-400 py-2.5 rounded-xl text-xs font-bold disabled:opacity-40 transition-all text-center mt-1 border border-blue-200/40 dark:border-blue-900/30"
+                                        >
+                                            إصدار بطاقة بديلة (استبدال)
+                                        </button>
+                                    </div>
                                 </div>
                             )}
                         </div>
@@ -259,17 +309,55 @@ const CardsPage: React.FC = () => {
             </div>
 
             {filteredCards.length === 0 && (
-                <div className="bg-white rounded-2xl border border-slate-100 p-12 text-center">
-                    <div className="w-20 h-20 bg-slate-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                        <svg className="w-10 h-10 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div className="bg-white dark:bg-slate-800 rounded-3xl border border-slate-100 dark:border-slate-700 p-12 text-center shadow-sm">
+                    <div className="w-20 h-20 bg-slate-100 dark:bg-slate-700 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                        <svg className="w-10 h-10 text-slate-350 dark:text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
                         </svg>
                     </div>
-                    <p className="text-slate-500 font-bold">لا توجد بطاقات</p>
-                    <p className="text-sm text-slate-400 mt-1">جرب تعديل البحث أو الفلاتر</p>
+                    <p className="text-slate-500 dark:text-slate-400 font-bold">لا توجد بطاقات</p>
+                    <p className="text-sm text-slate-400 dark:text-slate-500 mt-1">جرب تعديل البحث أو الفلاتر</p>
+                </div>
+            )}
+
+            {/* Pagination */}
+            {totalPages > 1 && (
+                <div className="flex items-center justify-between bg-white dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 px-6 py-4 mt-6">
+                    <p className="text-xs text-slate-400 dark:text-slate-500">
+                        عرض {(currentPage - 1) * 9 + 1}-{Math.min(currentPage * 9, filteredCards.length)} من {filteredCards.length}
+                    </p>
+                    <div className="flex items-center gap-1">
+                        <button
+                            onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                            disabled={currentPage === 1}
+                            className="px-3 py-2 rounded-lg text-xs font-bold transition-all disabled:opacity-30 disabled:cursor-not-allowed hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300"
+                        >
+                            السابق
+                        </button>
+                        {Array.from({ length: totalPages }, (_, i) => i + 1).map(p => (
+                            <button
+                                key={p}
+                                onClick={() => setCurrentPage(p)}
+                                className={`w-8 h-8 rounded-lg text-xs font-bold transition-all ${currentPage === p
+                                    ? 'bg-cyan-500 text-white'
+                                    : 'text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700'
+                                    }`}
+                            >
+                                {p}
+                            </button>
+                        ))}
+                        <button
+                            onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                            disabled={currentPage === totalPages}
+                            className="px-3 py-2 rounded-lg text-xs font-bold transition-all disabled:opacity-30 disabled:cursor-not-allowed hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300"
+                        >
+                            التالي
+                        </button>
+                    </div>
                 </div>
             )}
         </div>
+
     );
 };
 

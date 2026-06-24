@@ -218,15 +218,46 @@ export const exportToPDF = (options: PDFExportOptions) => {
         </div>
 
         <script>
-            setTimeout(() => window.print(), 600);
+            // We will trigger printing from the parent window
         </script>
     </body>
     </html>
     `;
 
-    const printWindow = window.open('', '_blank');
-    if (printWindow) {
-        printWindow.document.write(html);
-        printWindow.document.close();
+    // Create an iframe to render the print document
+    const iframe = document.createElement('iframe');
+    iframe.style.position = 'fixed';
+    iframe.style.right = '0';
+    iframe.style.bottom = '0';
+    iframe.style.width = '0';
+    iframe.style.height = '0';
+    iframe.style.border = '0';
+    iframe.style.pointerEvents = 'none';
+    
+    document.body.appendChild(iframe);
+    
+    const iframeDoc = iframe.contentDocument || iframe.contentWindow?.document;
+    if (iframeDoc) {
+        iframeDoc.open();
+        iframeDoc.write(html);
+        iframeDoc.close();
+        
+        // Wait for styles/fonts and content to load before calling print
+        setTimeout(() => {
+            if (iframe.contentWindow) {
+                iframe.contentWindow.focus();
+                
+                // Add event listener to clean up the iframe after printing (accepted or cancelled)
+                iframe.contentWindow.addEventListener('afterprint', () => {
+                    try {
+                        document.body.removeChild(iframe);
+                    } catch (e) {
+                        console.warn('Iframe already removed or failed to remove:', e);
+                    }
+                });
+                
+                iframe.contentWindow.print();
+            }
+        }, 1000);
     }
 };

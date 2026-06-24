@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { useTheme } from '../contexts/ThemeContext';
+import { changeEmployeePassword } from '../firebase/authService';
+import { useNotifications } from '../contexts/NotificationsContext';
 
 type Tab = 'account' | 'appearance' | 'notifications' | 'security';
 
@@ -15,11 +17,16 @@ const SettingsPage: React.FC = () => {
     const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
     const [loading, setLoading] = useState(false);
 
-    // Notification settings state
-    const [notifNewMember, setNotifNewMember] = useState(true);
-    const [notifExpiry, setNotifExpiry] = useState(true);
-    const [notifTransaction, setNotifTransaction] = useState(false);
-    const [notifSound, setNotifSound] = useState(true);
+    const {
+        notifNewMember,
+        setNotifNewMember,
+        notifExpiry,
+        setNotifExpiry,
+        notifTransaction,
+        setNotifTransaction,
+        notifSound,
+        setNotifSound
+    } = useNotifications();
 
     const roleLabel: Record<string, string> = {
         admin: 'مدير النظام',
@@ -35,8 +42,8 @@ const SettingsPage: React.FC = () => {
             setMessage({ type: 'error', text: 'يرجى ملء جميع الحقول' });
             return;
         }
-        if (newPassword.length < 4) {
-            setMessage({ type: 'error', text: 'كلمة المرور الجديدة يجب أن تكون 4 أحرف على الأقل' });
+        if (newPassword.length < 6) {
+            setMessage({ type: 'error', text: 'كلمة المرور الجديدة يجب أن تكون 6 أحرف على الأقل' });
             return;
         }
         if (newPassword !== confirmPassword) {
@@ -45,13 +52,24 @@ const SettingsPage: React.FC = () => {
         }
 
         setLoading(true);
-        await new Promise(r => setTimeout(r, 800));
-
-        setMessage({ type: 'success', text: 'تم تغيير كلمة المرور بنجاح' });
-        setCurrentPassword('');
-        setNewPassword('');
-        setConfirmPassword('');
-        setLoading(false);
+        try {
+            await changeEmployeePassword(currentPassword, newPassword);
+            setMessage({ type: 'success', text: 'تم تغيير كلمة المرور بنجاح' });
+            setCurrentPassword('');
+            setNewPassword('');
+            setConfirmPassword('');
+        } catch (error: unknown) {
+            const firebaseError = error as { code?: string };
+            if (firebaseError.code === 'auth/wrong-password' || firebaseError.code === 'auth/invalid-credential') {
+                setMessage({ type: 'error', text: 'كلمة المرور الحالية غير صحيحة' });
+            } else if (firebaseError.code === 'auth/weak-password') {
+                setMessage({ type: 'error', text: 'كلمة المرور الجديدة ضعيفة جداً' });
+            } else {
+                setMessage({ type: 'error', text: 'حدث خطأ أثناء تغيير كلمة المرور. حاول مرة أخرى' });
+            }
+        } finally {
+            setLoading(false);
+        }
     };
 
     const ToggleSwitch: React.FC<{ checked: boolean; onChange: (v: boolean) => void; color?: string }> = ({ checked, onChange, color = 'bg-cyan-500' }) => (

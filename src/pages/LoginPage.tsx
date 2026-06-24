@@ -9,6 +9,7 @@ const LoginPage: React.FC = () => {
     const [loading, setLoading] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
     const [mounted, setMounted] = useState(false);
+    const [showForgotPassword, setShowForgotPassword] = useState(false);
     const { login } = useAuth();
     const navigate = useNavigate();
 
@@ -169,6 +170,18 @@ const LoginPage: React.FC = () => {
                                 </>
                             )}
                         </button>
+
+                        {/* Forgot Password */}
+                        <button
+                            type="button"
+                            onClick={() => setShowForgotPassword(true)}
+                            className="login-forgot-btn"
+                        >
+                            <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            هل نسيت كلمة المرور؟
+                        </button>
                     </form>
 
                 </div>
@@ -178,6 +191,78 @@ const LoginPage: React.FC = () => {
                     © 2026 محصّلة - جميع الحقوق محفوظة
                 </p>
             </div>
+
+            {/* Forgot Password Modal */}
+            {showForgotPassword && (
+                <div className="login-modal-overlay" onClick={() => setShowForgotPassword(false)}>
+                    <div className="login-modal" onClick={(e) => e.stopPropagation()}>
+                        {/* Modal accent */}
+                        <div className="login-modal-accent" />
+                        
+                        {/* Close button */}
+                        <button
+                            className="login-modal-close"
+                            onClick={() => setShowForgotPassword(false)}
+                        >
+                            <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+
+                        {/* Icon */}
+                        <div className="login-modal-icon">
+                            <svg width="32" height="32" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" />
+                            </svg>
+                        </div>
+
+                        <h3 className="login-modal-title">نسيت كلمة المرور؟</h3>
+                        <p className="login-modal-desc">
+                            لا تقلق! يمكنك استعادة الوصول إلى حسابك بسهولة عن طريق التواصل مع مسؤول النظام.
+                        </p>
+
+                        {/* Steps */}
+                        <div className="login-modal-steps">
+                            <div className="login-modal-step">
+                                <div className="login-modal-step-num">1</div>
+                                <div>
+                                    <p className="login-modal-step-title">تواصل مع المسؤول</p>
+                                    <p className="login-modal-step-desc">أرسل طلب إعادة تعيين كلمة المرور لمسؤول النظام</p>
+                                </div>
+                            </div>
+                            <div className="login-modal-step">
+                                <div className="login-modal-step-num">2</div>
+                                <div>
+                                    <p className="login-modal-step-title">تأكيد الهوية</p>
+                                    <p className="login-modal-step-desc">قدّم اسم المستخدم الخاص بك للتحقق من هويتك</p>
+                                </div>
+                            </div>
+                            <div className="login-modal-step">
+                                <div className="login-modal-step-num">3</div>
+                                <div>
+                                    <p className="login-modal-step-title">كلمة مرور جديدة</p>
+                                    <p className="login-modal-step-desc">سيتم تزويدك بكلمة مرور جديدة مؤقتة لتسجيل الدخول</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Contact Info */}
+                        <div className="login-modal-contact">
+                            <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{ flexShrink: 0, marginTop: 2 }}>
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            <p>للمساعدة، تواصل مع الدعم الفني أو مسؤول النظام في فرعك.</p>
+                        </div>
+
+                        <button
+                            className="login-modal-btn"
+                            onClick={() => setShowForgotPassword(false)}
+                        >
+                            فهمت، شكراً
+                        </button>
+                    </div>
+                </div>
+            )}
 
             <style>{`
                 .login-page {
@@ -516,6 +601,197 @@ const LoginPage: React.FC = () => {
                     animation: spin 0.6s linear infinite;
                 }
 
+                /* === FORGOT PASSWORD LINK === */
+                .login-forgot-btn {
+                    width: 100%;
+                    background: none;
+                    border: none;
+                    color: #64748B;
+                    font-size: 13px;
+                    font-weight: 600;
+                    cursor: pointer;
+                    padding: 12px 0 0;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    gap: 6px;
+                    transition: all 0.3s ease;
+                    font-family: inherit;
+                }
+                .login-forgot-btn:hover {
+                    color: #06B6D4;
+                }
+                .login-forgot-btn:hover svg {
+                    color: #06B6D4;
+                }
+
+                /* === FORGOT PASSWORD MODAL === */
+                .login-modal-overlay {
+                    position: fixed;
+                    inset: 0;
+                    z-index: 100;
+                    background: rgba(0, 0, 0, 0.7);
+                    backdrop-filter: blur(8px);
+                    -webkit-backdrop-filter: blur(8px);
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    padding: 16px;
+                    animation: loginModalFadeIn 0.3s ease;
+                }
+                .login-modal {
+                    background: rgba(15, 23, 42, 0.95);
+                    backdrop-filter: blur(40px);
+                    -webkit-backdrop-filter: blur(40px);
+                    border: 1px solid rgba(255,255,255,0.1);
+                    border-radius: 28px;
+                    padding: 40px 36px 32px;
+                    max-width: 420px;
+                    width: 100%;
+                    position: relative;
+                    overflow: hidden;
+                    box-shadow: 0 32px 64px -16px rgba(0,0,0,0.8),
+                                inset 0 1px 0 rgba(255,255,255,0.06);
+                    animation: loginModalSlideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+                }
+                .login-modal-accent {
+                    position: absolute;
+                    top: 0;
+                    left: 10%;
+                    right: 10%;
+                    height: 3px;
+                    background: linear-gradient(90deg, transparent, #F59E0B, #EF4444, transparent);
+                    border-radius: 0 0 4px 4px;
+                }
+                .login-modal-close {
+                    position: absolute;
+                    top: 16px;
+                    left: 16px;
+                    background: rgba(255,255,255,0.06);
+                    border: 1px solid rgba(255,255,255,0.08);
+                    border-radius: 12px;
+                    width: 36px;
+                    height: 36px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    cursor: pointer;
+                    color: #64748B;
+                    transition: all 0.2s;
+                }
+                .login-modal-close:hover {
+                    color: #FFFFFF;
+                    background: rgba(255,255,255,0.1);
+                    border-color: rgba(255,255,255,0.15);
+                }
+                .login-modal-icon {
+                    width: 64px;
+                    height: 64px;
+                    background: linear-gradient(135deg, rgba(245, 158, 11, 0.15), rgba(239, 68, 68, 0.1));
+                    border: 1px solid rgba(245, 158, 11, 0.2);
+                    border-radius: 20px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    margin: 0 auto 20px;
+                    color: #F59E0B;
+                }
+                .login-modal-title {
+                    font-size: 22px;
+                    font-weight: 900;
+                    color: #FFFFFF;
+                    text-align: center;
+                    margin-bottom: 8px;
+                }
+                .login-modal-desc {
+                    font-size: 13px;
+                    color: #94A3B8;
+                    text-align: center;
+                    line-height: 1.7;
+                    margin-bottom: 24px;
+                }
+                .login-modal-steps {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 12px;
+                    margin-bottom: 20px;
+                }
+                .login-modal-step {
+                    display: flex;
+                    align-items: flex-start;
+                    gap: 14px;
+                    padding: 14px 16px;
+                    background: rgba(255,255,255,0.03);
+                    border: 1px solid rgba(255,255,255,0.06);
+                    border-radius: 16px;
+                    transition: all 0.2s;
+                }
+                .login-modal-step:hover {
+                    background: rgba(255,255,255,0.05);
+                    border-color: rgba(255,255,255,0.1);
+                }
+                .login-modal-step-num {
+                    width: 28px;
+                    height: 28px;
+                    background: linear-gradient(135deg, #06B6D4, #0D9488);
+                    border-radius: 10px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    color: white;
+                    font-size: 12px;
+                    font-weight: 800;
+                    flex-shrink: 0;
+                    margin-top: 2px;
+                }
+                .login-modal-step-title {
+                    font-size: 13px;
+                    font-weight: 700;
+                    color: #E2E8F0;
+                    margin-bottom: 2px;
+                }
+                .login-modal-step-desc {
+                    font-size: 11px;
+                    color: #64748B;
+                    line-height: 1.5;
+                }
+                .login-modal-contact {
+                    display: flex;
+                    align-items: flex-start;
+                    gap: 10px;
+                    padding: 14px 16px;
+                    background: rgba(6, 182, 212, 0.06);
+                    border: 1px solid rgba(6, 182, 212, 0.12);
+                    border-radius: 14px;
+                    margin-bottom: 24px;
+                    color: #67E8F9;
+                    font-size: 12px;
+                    font-weight: 600;
+                    line-height: 1.6;
+                }
+                .login-modal-contact p {
+                    color: #94A3B8;
+                }
+                .login-modal-btn {
+                    width: 100%;
+                    background: linear-gradient(135deg, rgba(255,255,255,0.08), rgba(255,255,255,0.04));
+                    color: #FFFFFF;
+                    padding: 14px;
+                    border-radius: 16px;
+                    font-weight: 800;
+                    font-size: 14px;
+                    border: 1px solid rgba(255,255,255,0.1);
+                    cursor: pointer;
+                    transition: all 0.3s ease;
+                    font-family: inherit;
+                }
+                .login-modal-btn:hover {
+                    background: linear-gradient(135deg, rgba(255,255,255,0.12), rgba(255,255,255,0.06));
+                    border-color: rgba(255,255,255,0.18);
+                    transform: translateY(-1px);
+                    box-shadow: 0 8px 24px -8px rgba(0,0,0,0.4);
+                }
+
                 /* === HINT === */
                 .login-hint {
                     margin-top: 20px;
@@ -570,6 +846,14 @@ const LoginPage: React.FC = () => {
                 }
                 @keyframes spin {
                     to { transform: rotate(360deg); }
+                }
+                @keyframes loginModalFadeIn {
+                    from { opacity: 0; }
+                    to { opacity: 1; }
+                }
+                @keyframes loginModalSlideUp {
+                    from { opacity: 0; transform: translateY(20px) scale(0.96); }
+                    to { opacity: 1; transform: translateY(0) scale(1); }
                 }
 
                 /* === RESPONSIVE === */
