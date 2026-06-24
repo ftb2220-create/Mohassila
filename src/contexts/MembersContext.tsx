@@ -122,6 +122,7 @@ export const MembersProvider: React.FC<{ children: ReactNode }> = ({ children })
             },
             (error) => {
                 console.error("Failed to subscribe to members:", error);
+                showToast('فشل في مزامنة الأعضاء: ' + (error.message || error), 'error');
                 membersLoaded = true;
                 checkLoaded();
             }
@@ -135,6 +136,7 @@ export const MembersProvider: React.FC<{ children: ReactNode }> = ({ children })
             },
             (error) => {
                 console.error("Failed to subscribe to transactions:", error);
+                showToast('فشل في مزامنة العمليات المالية: ' + (error.message || error), 'error');
                 transactionsLoaded = true;
                 checkLoaded();
             }
