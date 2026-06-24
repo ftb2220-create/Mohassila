@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, type ReactNode, useCallback, useEffect } from 'react';
 import type { Member, Transaction, DashboardStats, CardStatus } from '../types';
 import { useToast } from './ToastContext';
+import { useAuth } from './AuthContext';
 import {
     subscribeToMembers, createMember as createMemberDoc,
     updateMember as updateMemberDoc, deleteMemberDoc,
@@ -92,9 +93,18 @@ export const MembersProvider: React.FC<{ children: ReactNode }> = ({ children })
     const [activityLog, setActivityLog] = useState<ActivityEntry[]>([]);
     const [loading, setLoading] = useState(true);
     const { showToast } = useToast();
+    const { isAuthenticated } = useAuth();
 
     // Real-time subscriptions
     useEffect(() => {
+        if (!isAuthenticated) {
+            setMembers([]);
+            setTransactions([]);
+            setActivityLog([]);
+            setLoading(true);
+            return;
+        }
+
         let membersLoaded = false;
         let transactionsLoaded = false;
         let isLoaded = false;
@@ -152,7 +162,7 @@ export const MembersProvider: React.FC<{ children: ReactNode }> = ({ children })
             unsubTransactions();
             unsubActivity();
         };
-    }, []);
+    }, [isAuthenticated]);
 
     // حساب الإحصائيات تلقائياً من البيانات
     const stats = calculateStats(members, transactions);
