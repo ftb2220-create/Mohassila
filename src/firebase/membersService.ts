@@ -66,11 +66,20 @@ export async function fetchMembers(): Promise<Member[]> {
 /**
  * مراقبة الأعضاء في الوقت الحقيقي (Real-time)
  */
-export function subscribeToMembers(callback: (members: Member[]) => void): Unsubscribe {
+export function subscribeToMembers(
+    callback: (members: Member[]) => void,
+    onError?: (error: any) => void
+): Unsubscribe {
     const q = query(collection(db, MEMBERS_COLLECTION), orderBy('name'));
-    return onSnapshot(q, (snapshot) => {
-        const members = snapshot.docs.map(d => memberFromFirestore(d.id, d.data()));
-        callback(members);
+    return onSnapshot(q, {
+        next: (snapshot) => {
+            const members = snapshot.docs.map(d => memberFromFirestore(d.id, d.data()));
+            callback(members);
+        },
+        error: (err) => {
+            console.error("subscribeToMembers error:", err);
+            if (onError) onError(err);
+        }
     });
 }
 

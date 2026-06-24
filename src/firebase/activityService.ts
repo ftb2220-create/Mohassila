@@ -41,16 +41,23 @@ export async function fetchActivityLog(maxEntries = 50): Promise<ActivityEntry[]
  */
 export function subscribeToActivityLog(
     callback: (entries: ActivityEntry[]) => void,
-    maxEntries = 50
+    maxEntries = 50,
+    onError?: (error: any) => void
 ): Unsubscribe {
     const q = query(
         collection(db, ACTIVITY_COLLECTION),
         orderBy('timestamp', 'desc'),
         limit(maxEntries)
     );
-    return onSnapshot(q, (snapshot) => {
-        const entries = snapshot.docs.map(d => activityFromFirestore(d.id, d.data()));
-        callback(entries);
+    return onSnapshot(q, {
+        next: (snapshot) => {
+            const entries = snapshot.docs.map(d => activityFromFirestore(d.id, d.data()));
+            callback(entries);
+        },
+        error: (err) => {
+            console.error("subscribeToActivityLog error:", err);
+            if (onError) onError(err);
+        }
     });
 }
 

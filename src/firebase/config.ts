@@ -3,7 +3,7 @@
 // ⚠️ يجب تحديث هذه القيم ببيانات مشروعك من Firebase Console
 
 import { initializeApp } from 'firebase/app';
-import { getFirestore } from 'firebase/firestore';
+import { initializeFirestore } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
 
 const firebaseConfig = {
@@ -18,8 +18,10 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 
-// Initialize Firestore
-export const db = getFirestore(app);
+// Initialize Firestore with long polling enabled to prevent WebSocket connection hangs
+export const db = initializeFirestore(app, {
+    experimentalAutoDetectLongPolling: true,
+});
 
 // Initialize Authentication
 export const auth = getAuth(app);

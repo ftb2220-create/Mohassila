@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, type ReactNode, useCallback, useEffect } from 'react';
 import type { Member, Transaction, DashboardStats, CardStatus } from '../types';
+import { useToast } from './ToastContext';
 import {
     subscribeToMembers, createMember as createMemberDoc,
     updateMember as updateMemberDoc, deleteMemberDoc,
@@ -90,33 +91,61 @@ export const MembersProvider: React.FC<{ children: ReactNode }> = ({ children })
     const [transactions, setTransactions] = useState<Transaction[]>([]);
     const [activityLog, setActivityLog] = useState<ActivityEntry[]>([]);
     const [loading, setLoading] = useState(true);
+    const { showToast } = useToast();
 
     // Real-time subscriptions
     useEffect(() => {
         let membersLoaded = false;
         let transactionsLoaded = false;
+        let isLoaded = false;
 
         const checkLoaded = () => {
-            if (membersLoaded && transactionsLoaded) setLoading(false);
+            if (membersLoaded && transactionsLoaded) {
+                isLoaded = true;
+                setLoading(false);
+            }
         };
 
-        const unsubMembers = subscribeToMembers((data) => {
-            setMembers(data);
-            membersLoaded = true;
-            checkLoaded();
-        });
+        // Safety timeout to warn if connection takes too long
+        const timeoutId = setTimeout(() => {
+            if (!isLoaded) {
+                console.warn("Firestore connection is taking longer than usual.");
+                showToast('الاتصال بقاعدة البيانات يستغرق وقتاً أطول من المعتاد. يرجى التحقق من جودة الاتصال بالإنترنت.', 'warning');
+            }
+        }, 6000);
 
-        const unsubTransactions = subscribeToTransactions((data) => {
-            setTransactions(data);
-            transactionsLoaded = true;
-            checkLoaded();
-        });
+        const unsubMembers = subscribeToMembers(
+            (data) => {
+                setMembers(data);
+                membersLoaded = true;
+                checkLoaded();
+            },
+            (error) => {
+                console.error("Failed to subscribe to members:", error);
+                membersLoaded = true;
+                checkLoaded();
+            }
+        );
+
+        const unsubTransactions = subscribeToTransactions(
+            (data) => {
+                setTransactions(data);
+                transactionsLoaded = true;
+                checkLoaded();
+            },
+            (error) => {
+                console.error("Failed to subscribe to transactions:", error);
+                transactionsLoaded = true;
+                checkLoaded();
+            }
+        );
 
         const unsubActivity = subscribeToActivityLog((data) => {
             setActivityLog(data);
         });
 
         return () => {
+            clearTimeout(timeoutId);
             unsubMembers();
             unsubTransactions();
             unsubActivity();

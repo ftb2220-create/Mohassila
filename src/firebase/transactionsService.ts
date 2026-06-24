@@ -38,11 +38,20 @@ export async function fetchTransactions(): Promise<Transaction[]> {
 /**
  * مراقبة العمليات في الوقت الحقيقي
  */
-export function subscribeToTransactions(callback: (transactions: Transaction[]) => void): Unsubscribe {
+export function subscribeToTransactions(
+    callback: (transactions: Transaction[]) => void,
+    onError?: (error: any) => void
+): Unsubscribe {
     const q = query(collection(db, TRANSACTIONS_COLLECTION), orderBy('date', 'desc'));
-    return onSnapshot(q, (snapshot) => {
-        const transactions = snapshot.docs.map(d => transactionFromFirestore(d.id, d.data()));
-        callback(transactions);
+    return onSnapshot(q, {
+        next: (snapshot) => {
+            const transactions = snapshot.docs.map(d => transactionFromFirestore(d.id, d.data()));
+            callback(transactions);
+        },
+        error: (err) => {
+            console.error("subscribeToTransactions error:", err);
+            if (onError) onError(err);
+        }
     });
 }
 
