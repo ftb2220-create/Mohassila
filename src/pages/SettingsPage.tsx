@@ -165,14 +165,10 @@ const SettingsPage: React.FC = () => {
                                 </div>
                             </div>
 
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4 mt-8 md:mt-10 relative z-10">
+                            <div className="mt-8 md:mt-10 relative z-10 max-w-xs">
                                 <div className="bg-slate-50 dark:bg-slate-700/40 p-3.5 md:p-4 rounded-xl border border-slate-100 dark:border-slate-600/50 shadow-sm">
                                     <p className="text-[10px] font-bold text-slate-400 dark:text-slate-500 mb-1 uppercase tracking-widest">الفرع الحالي</p>
                                     <p className="text-sm md:text-base font-black text-slate-800 dark:text-slate-100">{employee?.branch || 'الفرع الرئيسي'}</p>
-                                </div>
-                                <div className="bg-slate-50 dark:bg-slate-700/40 p-3.5 md:p-4 rounded-xl border border-slate-100 dark:border-slate-600/50 shadow-sm">
-                                    <p className="text-[10px] font-bold text-slate-400 dark:text-slate-500 mb-1 uppercase tracking-widest">تاريخ الانضمام</p>
-                                    <p className="text-sm md:text-base font-black text-slate-800 dark:text-slate-100 font-tabular">2024 / 01 / 01</p>
                                 </div>
                             </div>
                         </div>
