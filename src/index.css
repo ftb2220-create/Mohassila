@@ -951,6 +951,9 @@ body {
   header {
     padding-top: calc(0.75rem + env(safe-area-inset-top)) !important;
   }
+  aside {
+    padding-top: env(safe-area-inset-top) !important;
+  }
 }
 
 /* Prevent accidental text selection on navigation and UI buttons on mobile */
