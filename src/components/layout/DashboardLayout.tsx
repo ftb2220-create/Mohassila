@@ -8,6 +8,7 @@ import { getPermissions } from '../../utils/permissions';
 import ScrollToTop from '../ui/ScrollToTop';
 import PageTransition from '../ui/PageTransition';
 import Tooltip from '../ui/Tooltip';
+import Logo from '../Logo';
 
 const DashboardLayout: React.FC = () => {
     const { employee, logout } = useAuth();
@@ -122,20 +123,22 @@ const DashboardLayout: React.FC = () => {
                 <div className="h-[3px] bg-gradient-to-l from-cyan-500 via-teal-500 to-emerald-500" />
                 {/* Radial glow behind employee info */}
                 <div className="absolute top-0 right-0 w-48 h-48 rounded-full pointer-events-none" style={{ background: 'radial-gradient(circle at 80% 20%, rgba(6,182,212,0.08) 0%, transparent 70%)' }} />
-                {/* Mobile Close Button */}
-                <div className="lg:hidden flex justify-end px-4 pt-3">
+
+                {/* Sidebar Header: Logo + Close */}
+                <div className="flex items-center justify-between px-4 pt-4 pb-2">
+                    <Logo size={32} showText={true} light={true} />
                     <button
                         onClick={() => setSidebarOpen(false)}
-                        className="text-white/50 hover:text-white p-1"
+                        className="lg:hidden text-white/40 hover:text-white hover:bg-white/10 p-1.5 rounded-lg transition-all"
                     >
-                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
                         </svg>
                     </button>
                 </div>
 
                 {/* Employee Info */}
-                <div className="px-4 pt-4 pb-3 border-b border-white/5">
+                <div className="px-4 pt-2 pb-3 border-b border-white/5">
                     <div className="flex items-center gap-3">
                         <div className="w-10 h-10 bg-gradient-to-br from-cyan-500 to-teal-500 rounded-xl flex items-center justify-center text-white font-black text-sm shadow-lg shadow-cyan-500/20">
                             {employee?.name.charAt(0)}
