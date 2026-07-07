@@ -8,7 +8,6 @@ import { getPermissions } from '../../utils/permissions';
 import ScrollToTop from '../ui/ScrollToTop';
 import PageTransition from '../ui/PageTransition';
 import Tooltip from '../ui/Tooltip';
-import Logo from '../Logo';
 
 const DashboardLayout: React.FC = () => {
     const { employee, logout } = useAuth();
@@ -124,12 +123,11 @@ const DashboardLayout: React.FC = () => {
                 {/* Radial glow behind employee info */}
                 <div className="absolute top-0 right-0 w-48 h-48 rounded-full pointer-events-none" style={{ background: 'radial-gradient(circle at 80% 20%, rgba(6,182,212,0.08) 0%, transparent 70%)' }} />
 
-                {/* Sidebar Header: Logo + Close */}
-                <div className="flex items-center justify-between px-4 pt-4 pb-2">
-                    <Logo size={32} showText={true} light={true} />
+                {/* Sidebar Header: Close Button for Mobile */}
+                <div className="lg:hidden flex justify-end px-4 pt-4 pb-2">
                     <button
                         onClick={() => setSidebarOpen(false)}
-                        className="lg:hidden text-white/40 hover:text-white hover:bg-white/10 p-1.5 rounded-lg transition-all"
+                        className="text-white/40 hover:text-white hover:bg-white/10 p-1.5 rounded-lg transition-all"
                     >
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
