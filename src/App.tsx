@@ -23,22 +23,20 @@ const LoadingScreen: React.FC = () => (
         <svg width="64" height="64" viewBox="0 0 64 64" fill="none">
           <defs>
             <linearGradient id="loadGrad" x1="0" y1="0" x2="64" y2="64">
-              <stop offset="0%" stopColor="#06B6D4" />
-              <stop offset="50%" stopColor="#0891B2" />
-              <stop offset="100%" stopColor="#0D9488" />
+              <stop offset="0%" stopColor="#0A0F1E" />
+              <stop offset="100%" stopColor="#1E293B" />
             </linearGradient>
-            <linearGradient id="loadShield" x1="20" y1="18" x2="44" y2="48">
-              <stop offset="0%" stopColor="#FFFFFF" />
-              <stop offset="100%" stopColor="#E0F2FE" stopOpacity="0.85" />
-            </linearGradient>
-            <linearGradient id="loadCheck" x1="24" y1="34" x2="40" y2="50">
-              <stop offset="0%" stopColor="#FCD34D" />
-              <stop offset="100%" stopColor="#F59E0B" />
+            <linearGradient id="loadGoldGrad" x1="16" y1="16" x2="48" y2="48">
+              <stop offset="0%" stopColor="#FDE047" />
+              <stop offset="50%" stopColor="#EAB308" />
+              <stop offset="100%" stopColor="#CA8A04" />
             </linearGradient>
           </defs>
-          <rect x="2" y="2" width="60" height="60" rx="16" fill="url(#loadGrad)" />
-          <path d="M32 14C32 14 22 16 18 18V30C18 38 24 44 32 50C40 44 46 38 46 30V18C42 16 32 14 32 14Z" fill="url(#loadShield)" opacity="0.95" />
-          <path d="M24 32L29 37L40 26" stroke="url(#loadCheck)" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+          <rect x="2" y="2" width="60" height="60" rx="16" fill="url(#loadGrad)" stroke="#06B6D4" strokeWidth="1.5" />
+          <path d="M18 34L25 41L33 22" stroke="url(#loadGoldGrad)" strokeWidth="4.5" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+          <path d="M38 41V28" stroke="url(#loadGoldGrad)" strokeWidth="4.5" strokeLinecap="round" fill="none" />
+          <path d="M46 41V16" stroke="url(#loadGoldGrad)" strokeWidth="4.5" strokeLinecap="round" fill="none" />
+          <circle cx="46" cy="16" r="2.5" fill="#FDE047" />
         </svg>
       </div>
       <p style={{ color: '#94A3B8', fontSize: 14, fontWeight: 600 }}>جاري التحميل...</p>
